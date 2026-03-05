@@ -1,0 +1,37 @@
+in directory packages/backend
+
+Need to implement registration and authorisation on backend.
+
+Use postgres and typeorm for storing User entity, redis and express-session for user session
+
+Add redis and postgres to docker-compose for tests
+Add connection to redis and postgres in backend
+Add migrations for typeorm and run them before tests
+Use faker.js for random emails and usernames in tests
+
+
+User properties: 
+id,email,username,username_unique,created,updated,lastLogin
+username should have only characters: a-z,A-Z,-_
+username_unique is lowercase version of username and should be unique in database
+
+new api endpoints:
+POST /register: should register users in database. required properties: username,email,password
+POST /login: should check credentials and write user session
+POST /logout: should remove info from user session
+POST /my-info: should return info of logged in user [username,email]. If not logged in, should return Unauthorized.
+
+socket should also have information about user session
+socket should receive message "my-info" and response with user info [username,email]
+
+Tests should be runned with credentials to save cookies.
+
+All input data should be validated using class-validator
+
+in tests:
+Registration test
+- POST to /register and check that response is 200 ok
+- POST to /login and check that response is 200 ok
+- POST to /my-info and check that in response right username and email
+- connect to socket, send message "my-info" and recive right username and email
+

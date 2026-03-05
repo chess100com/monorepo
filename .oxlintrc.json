@@ -1,0 +1,85 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "categories": {
+    "correctness": "error",
+    "pedantic": "error",
+    "perf": "error",
+    "nursery": "error",
+    "restriction": "error",
+    "style": "error",
+    "suspicious": "error"
+  },
+  "rules": {
+    "eslint/sort-keys": "allow",
+    "eslint/no-magic-numbers": "allow",
+    "explicit-function-return-type": "allow",
+    "eslint/sort-imports": "allow",
+    "filename-case": "allow",
+    "no-ternary": "allow",
+    "no-null": "allow",
+    "no-array-index-key": "allow",
+    "yoda": "allow",
+    "no-array-for-each": "allow",
+    "react-in-jsx-scope": "allow",
+    "no-duplicate-imports": "allow",
+    "no-optional-chaining": "allow",
+    "no-empty-function": "allow",
+    "no-undef": "allow",
+    "no-rest-spread-properties": "allow",
+    "max-params": "allow",
+    "no-async-await": "allow",
+    "no-plusplus": "allow",
+    "no-continue": "allow",
+    "no-undefined": "allow",
+    "consistent-indexed-object-style": "allow",
+    "prefer-modern-math-apis": "allow",
+    "prefer-exponentiation-operator": "allow",
+    "jsx-key": "allow",
+    "max-statements": "allow",
+    "no-nested-ternary": "allow",
+    "catch-error-name": "allow",
+    "empty-brace-spaces": "allow",
+    "func-style": "allow",
+    "eslint/max-lines-per-function": [
+      "error",
+      {
+        "max": 300,
+        "skipBlankLines": false,
+        "skipComments": false,
+        "IIFEs": false
+      }
+    ],
+    "eslint/max-nested-callbacks": [
+      "error",
+      5
+    ],
+    "eslint/max-depth": [
+      "error",
+      4
+    ],
+    "eslint/curly": "allow",
+    "eslint/new-cap": "allow",
+    "eslint/id-length": "allow",
+    "eslint/prefer-destructuring": "allow",
+    "arrow-body-style": "allow",
+    "eslint/class-methods-use-this": "allow",
+    "prefer-at": "allow",
+    "switch-case-braces": "allow",
+    "no-implicit-coercion": "allow",
+    "prefer-string-raw": "allow",
+    "@typescript-eslint/no-extraneous-class": [
+      "error",
+      {
+        "allowConstructorOnly": false,
+        "allowEmpty": false,
+        "allowStaticOnly": false,
+        "allowWithDecorator": true
+      }
+    ],
+    "radix": "allow",
+    "capitalized-comments": "allow"
+  },
+  "ignorePatterns": [
+    "**/scripts/*.js"
+  ]
+}

@@ -1,0 +1,4 @@
+node_modules
+/scripts/anecdotes_data
+*.stryker-tmp
+.neteragen

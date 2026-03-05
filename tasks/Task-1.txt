@@ -1,0 +1,10 @@
+1. Create backend module in packages/backend with express.js and socket.io library
+2. create single endpoint with GET request to uri /healthcheck and response with status 200 and content "OK"
+3. Create single endpoing in socket that will receive message 'ping' and response with message 'pong'
+4. create Dockerfile for that package
+5. create docker-compose.yml for that package with single service "backend"
+6. create tests using vitest in test folder that will run docker-compose and check
+  - on get request to /healthcheck server responses with "OK"
+  - socket can connect and when sending message "ping" it answer with "pong"
+7. add script "test" to package.json that run this tests
+

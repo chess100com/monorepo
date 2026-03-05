@@ -1,0 +1,5 @@
+in packages/backend/
+
+server for tests should run not using ts-node, but using docker-compose
+
+fix it and rerun tests

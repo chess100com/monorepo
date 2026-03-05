@@ -1,0 +1,1 @@
+dont use "ts-check" in js files

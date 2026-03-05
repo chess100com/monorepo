@@ -1,0 +1,22 @@
+{
+  "name": "@chess100com/rules",
+  "version": "1.0.0",
+  "description": "",
+  "license": "ISC",
+  "author": "",
+  "type": "commonjs",
+  "main": "src/index.ts",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "vitest run ./test",
+    "test-watch": "vitest ./test",
+    "stryker": "stryker run"
+  },
+  "devDependencies": {
+    "@stryker-mutator/core": "^9.5.1",
+    "@stryker-mutator/vitest-runner": "^9.5.1",
+    "vitest": "^4.0.18"
+  }
+}
