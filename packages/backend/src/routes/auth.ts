@@ -27,16 +27,23 @@ router.post('/register', asyncHandler(async (req: Request, res: Response) => {
   }
 
   const repo = AppDataSource.getRepository(User);
-  const existing = await repo.findOneBy({ email: dto.email });
-  if (existing) {
+  const existingEmail = await repo.findOneBy({ email: dto.email });
+  if (existingEmail) {
     res.status(409).json({ error: 'Email already registered' });
+    return;
+  }
+
+  const username_unique = dto.username.toLowerCase();
+  const existingUsername = await repo.findOneBy({ username_unique });
+  if (existingUsername) {
+    res.status(409).json({ error: 'Username already taken' });
     return;
   }
 
   const hashed = await bcrypt.hash(dto.password, 10);
   const user = repo.create({
     username: dto.username,
-    username_unique: dto.username.toLowerCase(),
+    username_unique,
     email: dto.email,
     password: hashed,
   });
