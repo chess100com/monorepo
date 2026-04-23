@@ -5,7 +5,7 @@ import { Trans, useTranslation } from 'react-i18next';
 import { GameType } from '@chess100com/rules';
 import type { LeaderboardEntry, OngoingGameSummary } from '@chess100com/client-core';
 import { MAX_ONGOING_GAMES } from '@chess100com/client-core';
-import { useStore } from '../stores/context';
+import { useStore } from '../stores/context.js';
 
 const VARIANT_I18N: Record<GameType, string> = {
   [GameType.Heirs]: 'variants.heirs',

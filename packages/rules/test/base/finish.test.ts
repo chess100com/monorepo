@@ -1,5 +1,5 @@
 import { assert, describe, it } from "vitest"
-import { Game } from "../../src/Game"
+import { Game } from "../../src/Game.js"
 
 describe("Game finish", () => {
 

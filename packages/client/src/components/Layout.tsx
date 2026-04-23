@@ -4,7 +4,7 @@ import { Link, NavLink } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { GameType } from '@chess100com/rules';
 import { SUPPORTED_LANGUAGES, LANGUAGE_LABELS, type Language } from '@chess100com/client-core';
-import { useStore } from '../stores/context';
+import { useStore } from '../stores/context.js';
 
 function navClass({ isActive }: { isActive: boolean }): string {
   return `nav-link${isActive ? ' active' : ''}`;

@@ -1,6 +1,6 @@
 import { assert, describe, it } from "vitest"
-import { Game } from "../../src/Game"
-import { Utils } from "../../src/Utils"
+import { Game } from "../../src/Game.js"
+import { Utils } from "../../src/Utils.js"
 
 describe("Heavy figures moves", () => {
 

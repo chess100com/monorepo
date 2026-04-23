@@ -4,8 +4,8 @@ import { Chessground } from '@chess100com/chessground';
 import type { Api } from '@chess100com/chessground/api';
 import type { Config } from '@chess100com/chessground/config';
 import type { Key } from '@chess100com/chessground/types';
-import { useStore } from '../stores/context';
-import { coordToKey, computeDests, isPromotion, keyToCoord, AutoPawnPromotion } from '../services/chess';
+import { useStore } from '../stores/context.js';
+import { coordToKey, computeDests, isPromotion, keyToCoord, AutoPawnPromotion } from '../services/chess.js';
 
 export const Board = observer(() => {
   const { game } = useStore();

@@ -1,8 +1,8 @@
 // oxlint-disable complexity
-import type { Position } from "./Position"
-import type { CoordinateInterface } from "./Shared";
-import { Color } from "./Shared"
-import { Utils } from "./Utils"
+import type { Position } from "./Position.js"
+import type { CoordinateInterface } from "./Shared.js";
+import { Color } from "./Shared.js"
+import { Utils } from "./Utils.js"
 
 export const getPawnMoves = (c: CoordinateInterface, color: Color, position: Position): CoordinateInterface[] => {
   const returnValue: CoordinateInterface[] = []

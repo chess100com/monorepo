@@ -7,11 +7,11 @@ import session from 'express-session';
 import RedisStore from 'connect-redis';
 import { createAdapter } from '@socket.io/redis-adapter';
 import { GameStatus, GameType, OngoingResult, VariantStartFen } from '@chess100com/rules';
-import { redisClient } from './redis-client';
-import { AppDataSource } from './data-source';
-import { User } from './entity/User';
-import { Game } from './entity/Game';
-import { getUserRatings, loadAllRatings } from './elo';
+import { redisClient } from './redis-client.js';
+import { AppDataSource } from './data-source.js';
+import { User } from './entity/User.js';
+import { Game } from './entity/Game.js';
+import { getUserRatings, loadAllRatings } from './elo.js';
 import {
   getAllQueueSizes,
   leaveAllQueues,
@@ -19,15 +19,15 @@ import {
   resetLobby,
   switchQueue,
   unregisterSocket,
-} from './lobby';
-import type { MatchPair, QueueSizes } from './lobby';
-import { makeFlagHandler, registerGameHandlers } from './game-handlers';
-import { initClock, scheduleFlagTimer } from './clock';
-import { colorToString, rebuildRulesGame } from './game-runtime';
-import authRouter from './routes/auth';
-import gamesRouter from './routes/games';
-import leaderboardRouter from './routes/leaderboard';
-import passwordRouter from './routes/password';
+} from './lobby.js';
+import type { MatchPair, QueueSizes } from './lobby.js';
+import { makeFlagHandler, registerGameHandlers } from './game-handlers.js';
+import { initClock, scheduleFlagTimer } from './clock.js';
+import { colorToString, rebuildRulesGame } from './game-runtime.js';
+import authRouter from './routes/auth.js';
+import gamesRouter from './routes/games.js';
+import leaderboardRouter from './routes/leaderboard.js';
+import passwordRouter from './routes/password.js';
 
 const app = express();
 const httpServer = createServer(app);

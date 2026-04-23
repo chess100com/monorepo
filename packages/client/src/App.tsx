@@ -1,17 +1,17 @@
 import { observer } from 'mobx-react-lite';
 import { useEffect } from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
-import { useStore } from './stores/context';
-import { Layout } from './components/Layout';
-import { ProtectedRoute } from './components/ProtectedRoute';
-import { Home } from './routes/Home';
-import { Rules } from './routes/Rules';
-import { Login } from './routes/Login';
-import { Register } from './routes/Register';
-import { ForgotPassword } from './routes/ForgotPassword';
-import { Lobby } from './routes/Lobby';
-import { Game } from './routes/Game';
-import { Profile } from './routes/Profile';
+import { useStore } from './stores/context.js';
+import { Layout } from './components/Layout.js';
+import { ProtectedRoute } from './components/ProtectedRoute.js';
+import { Home } from './routes/Home.js';
+import { Rules } from './routes/Rules.js';
+import { Login } from './routes/Login.js';
+import { Register } from './routes/Register.js';
+import { ForgotPassword } from './routes/ForgotPassword.js';
+import { Lobby } from './routes/Lobby.js';
+import { Game } from './routes/Game.js';
+import { Profile } from './routes/Profile.js';
 
 const noop = () => {};
 

@@ -1,9 +1,9 @@
 // oxlint-disable complexity
 // oxlint-disable max-depth
-import type { Position } from "./Position"
-import type { Color } from "./Shared";
-import { type CoordinateInterface, Figure } from "./Shared"
-import { Utils } from "./Utils"
+import type { Position } from "./Position.js"
+import type { Color } from "./Shared.js";
+import { type CoordinateInterface, Figure } from "./Shared.js"
+import { Utils } from "./Utils.js"
 
 const directions: number[][] = [[-1, -1], [1, 1], [1, -1], [-1, 1], [-1, 0], [1, 0], [0, -1], [0, 1]]
 

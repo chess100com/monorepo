@@ -3,11 +3,11 @@ import type { Request, Response, NextFunction } from 'express';
 import { In } from 'typeorm';
 import { GameStatus } from '@chess100com/rules';
 import type { GameType } from '@chess100com/rules';
-import { AppDataSource } from '../data-source';
-import { Game } from '../entity/Game';
-import { User } from '../entity/User';
-import { UserRating } from '../entity/UserRating';
-import { ELO_DEFAULT } from '../elo-calc';
+import { AppDataSource } from '../data-source.js';
+import { Game } from '../entity/Game.js';
+import { User } from '../entity/User.js';
+import { UserRating } from '../entity/UserRating.js';
+import { ELO_DEFAULT } from '../elo-calc.js';
 
 type SessionWithUser = Express.Request['session'] & { userId?: number };
 

@@ -1,7 +1,7 @@
 import { assert, describe, it } from "vitest"
-import type { GameMetaData } from "../../src/Game";
-import { Game } from "../../src/Game"
-import { StartFen } from "../../src/Shared";
+import type { GameMetaData } from "../../src/Game.js";
+import { Game } from "../../src/Game.js"
+import { StartFen } from "../../src/Shared.js";
 
 describe("Game", () => {
 

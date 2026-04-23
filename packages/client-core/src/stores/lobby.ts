@@ -1,8 +1,8 @@
 import { makeAutoObservable, runInAction } from 'mobx';
 import type { Socket } from 'socket.io-client';
 import { GameType } from '@chess100com/rules';
-import { getSocket } from '../socket';
-import { apiFetch } from '../api';
+import { getSocket } from '../socket.js';
+import { apiFetch } from '../api.js';
 
 export interface MatchedGame {
   gameId: string;

@@ -2,10 +2,10 @@ import { Router } from 'express';
 import type { Request, Response, NextFunction } from 'express';
 import { randomUUID, randomBytes } from 'node:crypto';
 import bcrypt from 'bcrypt';
-import { AppDataSource } from '../data-source';
-import { User } from '../entity/User';
-import { redisClient } from '../redis-client';
-import { renderTemplate, sendMail } from '../mailer';
+import { AppDataSource } from '../data-source.js';
+import { User } from '../entity/User.js';
+import { redisClient } from '../redis-client.js';
+import { renderTemplate, sendMail } from '../mailer.js';
 
 const asyncHandler = (fn: (req: Request, res: Response, next: NextFunction) => Promise<void>) =>
   (req: Request, res: Response, next: NextFunction): void => {

@@ -3,11 +3,11 @@ import type { Request, Response, NextFunction } from 'express';
 import { plainToInstance } from 'class-transformer';
 import { validate } from 'class-validator';
 import bcrypt from 'bcrypt';
-import { AppDataSource } from '../data-source';
-import { User } from '../entity/User';
-import { RegisterDto } from '../dto/RegisterDto';
-import { LoginDto } from '../dto/LoginDto';
-import { loadAllRatings } from '../elo';
+import { AppDataSource } from '../data-source.js';
+import { User } from '../entity/User.js';
+import { RegisterDto } from '../dto/RegisterDto.js';
+import { LoginDto } from '../dto/LoginDto.js';
+import { loadAllRatings } from '../elo.js';
 
 type SessionWithUser = Express.Request['session'] & { userId?: number };
 

@@ -1,9 +1,9 @@
 import { WhiteWinsResult, BlackWinsResult, DrawResult, GameStatus, GameType } from '@chess100com/rules';
 import type { EntityManager } from 'typeorm';
-import { AppDataSource } from './data-source';
-import { Game } from './entity/Game';
-import { UserRating } from './entity/UserRating';
-import { calcElo, ELO_DEFAULT } from './elo-calc';
+import { AppDataSource } from './data-source.js';
+import { Game } from './entity/Game.js';
+import { UserRating } from './entity/UserRating.js';
+import { calcElo, ELO_DEFAULT } from './elo-calc.js';
 
 export interface EloUpdateResult {
   whiteBefore: number;

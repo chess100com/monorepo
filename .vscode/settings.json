@@ -1,6 +1,7 @@
 {
   "editor.formatOnSave": true,
-  "typescript.preferences.importModuleSpecifier": "relative",
+  "js/ts.preferences.importModuleSpecifier": "relative",
+  "js/ts.preferences.importModuleSpecifierEnding": "js",
   "editor.tabSize": 2,
   "editor.insertSpaces": true,
 }

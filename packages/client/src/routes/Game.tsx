@@ -2,9 +2,9 @@ import { observer } from 'mobx-react-lite';
 import { useEffect } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { useStore } from '../stores/context';
-import { Board } from '../components/Board';
-import { GameSidePanel } from '../components/GameSidePanel';
+import { useStore } from '../stores/context.js';
+import { Board } from '../components/Board.js';
+import { GameSidePanel } from '../components/GameSidePanel.js';
 
 const noop = () => {};
 

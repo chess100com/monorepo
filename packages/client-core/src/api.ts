@@ -1,4 +1,4 @@
-import { clientCoreConfig } from './config';
+import { clientCoreConfig } from './config.js';
 
 class HttpError extends Error {
   readonly status: number;

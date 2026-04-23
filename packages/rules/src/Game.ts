@@ -1,7 +1,7 @@
-import type { CoordinateInterface, Figure, ExtraMoveData } from "./Shared";
-import { StartFen, Color } from "./Shared"
-import { Position } from "./Position"
-import { Utils } from "./Utils"
+import type { CoordinateInterface, Figure, ExtraMoveData } from "./Shared.js";
+import { StartFen, Color } from "./Shared.js"
+import { Position } from "./Position.js"
+import { Utils } from "./Utils.js"
 
 export enum GameStatus {
   Ongoing = "ongoing",

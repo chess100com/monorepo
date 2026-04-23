@@ -1,7 +1,7 @@
 import { assert, describe, it } from "vitest"
-import { Game } from "../../src/Game"
-import { Utils } from "../../src/Utils"
-import { StartFen, Figure, Color } from "../../src/Shared"
+import { Game } from "../../src/Game.js"
+import { Utils } from "../../src/Utils.js"
+import { StartFen, Figure, Color } from "../../src/Shared.js"
 
 describe("Base position", () => {
 

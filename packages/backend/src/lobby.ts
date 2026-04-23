@@ -1,5 +1,5 @@
 import { GameType } from '@chess100com/rules';
-import { redisClient } from './redis-client';
+import { redisClient } from './redis-client.js';
 
 // Dedicated connection for WATCH/MULTI transactions. It must not be shared
 // with other code paths (session store, pub/sub, simple JSON.GET/SET) because

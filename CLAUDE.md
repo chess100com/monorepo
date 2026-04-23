@@ -66,6 +66,11 @@ In the package directory you changed, run and fix errors from:
 
 ## Conventions worth knowing
 
+### Imports
+
+- **Relative imports must end with `.js`** — including in `.ts` / `.tsx` files (e.g. `import { foo } from './bar.js';`, not `'./bar'`). The `.js` specifier still resolves to the `.ts`/`.tsx` source under every package's module resolution. VSCode's [.vscode/settings.json](.vscode/settings.json) sets `"js/ts.preferences.importModuleSpecifierEnding": "js"` so auto-imports follow suit. This applies across all packages except `packages/chessground/` (keep its local conventions — though it already uses `.js` too).
+- Package-name imports (`@chess100com/rules`, `express`, …) stay as-is. Asset/CSS/JSON imports keep their actual extension (`'./styles.css'`, `'./data.json'`).
+
 ### Rules engine
 
 - Coordinates are 1-indexed on both axes (`x: 1..10` → files `a..k` skipping `j`, `y: 1..10`). See `CoordinateInterface` in [Shared.ts](packages/rules/src/Shared.ts).

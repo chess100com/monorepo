@@ -1,7 +1,7 @@
 import type { Server, Socket } from 'socket.io';
 import { GameStatus, Color } from '@chess100com/rules';
-import { AppDataSource } from './data-source';
-import { Game } from './entity/Game';
+import { AppDataSource } from './data-source.js';
+import { Game } from './entity/Game.js';
 import {
   advanceClock,
   cancelFlagTimer,
@@ -9,8 +9,8 @@ import {
   getClockSnapshot,
   scheduleFlagTimer,
   whoFlagged,
-} from './clock';
-import type { FlagFallHandler } from './clock';
+} from './clock.js';
+import type { FlagFallHandler } from './clock.js';
 import {
   buildGameState,
   colorToString,
@@ -20,9 +20,9 @@ import {
   parseMovePayload,
   rebuildRulesGame,
   setDrawOffer,
-} from './game-runtime';
-import type { PlayerColor } from './game-runtime';
-import { applyEloUpdate } from './elo';
+} from './game-runtime.js';
+import type { PlayerColor } from './game-runtime.js';
+import { applyEloUpdate } from './elo.js';
 
 export const gameRoom = (gameId: string): string => `game:${gameId}`;
 
