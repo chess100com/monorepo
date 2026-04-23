@@ -100,7 +100,7 @@ export type KHz = number;
 
 export const colors = ['white', 'black'] as const;
 export const roles = ['pawn', 'knight', 'bishop', 'rook', 'queen', 'king', 'princess', 'prince'] as const;
-export const files = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j'] as const;
+export const files = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'k'] as const;
 export const ranks = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'] as const;
 
 export type RanksPosition = 'left' | 'right';

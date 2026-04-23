@@ -10,7 +10,7 @@ describe("Utils", () => {
         assert.throw(() => Utils.getColumnIndex("Z"))
         assert.throw(() => Utils.getColumnName(0))
         assert.throw(() => Utils.getColumnName(11))
-        assert.isNull(Utils.dCol("j", 1))
+        assert.isNull(Utils.dCol("k", 1))
         assert.isNull(Utils.dCol("a", -1))
         assert.equal(Utils.dCol("a", 1), "b")
         assert.throw(() => Utils.parseCoordinate("aswert"))

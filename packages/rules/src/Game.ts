@@ -1,7 +1,24 @@
-import type { CoordinateInterface, Figure, ExtraMoveData, Color } from "./Shared";
-import { StartFen } from "./Shared"
+import type { CoordinateInterface, Figure, ExtraMoveData } from "./Shared";
+import { StartFen, Color } from "./Shared"
 import { Position } from "./Position"
 import { Utils } from "./Utils"
+
+export enum GameStatus {
+  Ongoing = "ongoing",
+  Checkmate = "checkmate",
+  Stalemate = "stalemate",
+  ThreefoldRepetition = "threefold-repetition",
+  FiftyMoveRule = "fifty-move-rule",
+  InsufficientMaterial = "insufficient-material",
+  Resignation = "resignation",
+  Agreement = "agreement",
+  Timeout = "timeout",
+}
+
+export const OngoingResult = "*"
+export const WhiteWinsResult = "1-0"
+export const BlackWinsResult = "0-1"
+export const DrawResult = "1/2-1/2"
 
 export interface MoveMetadata {
   from: CoordinateInterface,
@@ -36,11 +53,13 @@ export class Game {
   round = ""
   white = ""
   black = ""
-  result = "*"
+  result = OngoingResult
+  status: GameStatus = GameStatus.Ongoing
   fromPosition = false
   startPosition: string | null = null;
   moves: MoveMetadata[] = []
 
+  private repetitionCounts = new Map<string, number>()
 
   position: Position;
 
@@ -59,6 +78,8 @@ export class Game {
     } else {
       this.position = Position.fromFen(StartFen);
     }
+    this.registerPositionForRepetition()
+    this.refreshStatus()
   }
 
   static create(metadata?: GameMetaData): Game {
@@ -105,9 +126,12 @@ export class Game {
   }
 
   /**
-   * Make move 
+   * Make move
    */
   move(from: CoordinateInterface, to: CoordinateInterface, extra?: ExtraMoveData): void {
+    if (this.status !== GameStatus.Ongoing) {
+      throw new Error(`Game already ended: ${this.status}`)
+    }
     Utils.validateCoordinate(from)
     Utils.validateCoordinate(to)
     if (!this.canMove(from, to)) {
@@ -128,98 +152,85 @@ export class Game {
     }
 
     this.moves.push(moveMetadata)
+    this.registerPositionForRepetition()
+    this.refreshStatus()
   }
 
-  /** 
-   * Converting moves like {x:1,y:1}, {x:2,y:2} to human readable format
-   * using in PGN
-   */
-  private getMoveAlias(oldPosition: Position, newPosition: Position, from: CoordinateInterface, to: CoordinateInterface, _?: ExtraMoveData): string {
+  resign(color: Color): void {
+    if (this.status !== GameStatus.Ongoing) {
+      throw new Error(`Game already ended: ${this.status}`)
+    }
+    if (color !== Color.White && color !== Color.Black) {
+      throw new Error("Only White or Black can resign")
+    }
+    this.status = GameStatus.Resignation
+    this.result = color === Color.White ? BlackWinsResult : WhiteWinsResult
+  }
+
+  agreeDraw(): void {
+    if (this.status !== GameStatus.Ongoing) {
+      throw new Error(`Game already ended: ${this.status}`)
+    }
+    this.status = GameStatus.Agreement
+    this.result = DrawResult
+  }
+
+  timeout(color: Color): void {
+    if (this.status !== GameStatus.Ongoing) {
+      throw new Error(`Game already ended: ${this.status}`)
+    }
+    if (color !== Color.White && color !== Color.Black) {
+      throw new Error("Only White or Black can time out")
+    }
+    this.status = GameStatus.Timeout
+    this.result = color === Color.White ? BlackWinsResult : WhiteWinsResult
+  }
+
+  isThreefoldRepetition(): boolean {
+    for (const count of this.repetitionCounts.values()) {
+      if (count >= 3) return true
+    }
+    return false
+  }
+
+  private registerPositionForRepetition(): void {
+    const key = this.position.getRepetitionKey()
+    this.repetitionCounts.set(key, (this.repetitionCounts.get(key) ?? 0) + 1)
+  }
+
+  private refreshStatus(): void {
+    if (this.position.isCheckmate()) {
+      this.status = GameStatus.Checkmate
+      this.result = this.position.getMovingColor() === Color.White ? BlackWinsResult : WhiteWinsResult
+      return
+    }
+    if (this.position.isStalemate()) {
+      this.status = GameStatus.Stalemate
+      this.result = DrawResult
+      return
+    }
+    if (this.isThreefoldRepetition()) {
+      this.status = GameStatus.ThreefoldRepetition
+      this.result = DrawResult
+      return
+    }
+    if (this.position.isFiftyMoveRule()) {
+      this.status = GameStatus.FiftyMoveRule
+      this.result = DrawResult
+      return
+    }
+    if (this.position.isInsufficientMaterial()) {
+      this.status = GameStatus.InsufficientMaterial
+      this.result = DrawResult
+      return
+    }
+    this.status = GameStatus.Ongoing
+    this.result = OngoingResult
+  }
+
+  private getMoveAlias(_oldPosition: Position, _newPosition: Position, from: CoordinateInterface, to: CoordinateInterface, _extra?: ExtraMoveData): string {
     return `${Utils.coordinateToString(from)}-${Utils.coordinateToString(to)}`
-    /*let returnValue: string = ""
-    let fromCellInfo = oldPosition.cellInfo(from)
-    let toCellInfo = oldPosition.cellInfo(to)
-    let takeString = toCellInfo.empty ? "" : "x"
-    if (fromCellInfo.figure === Figure.Pawn) {
-        if (from.x !== from.y) {
-            returnValue = Utils.getColumnName(from.x).concat(takeString, Utils.getColumnName(to.x), to.y.toString())
-        } else {
-            returnValue = Utils.getColumnName(to.x).concat(takeString, to.y.toString())
-        }
-    } else {
-        let allAvailableMoves = oldPosition.getAvailableMoves()
-        let availableDuplicates: Array<CoordinateInterface> = []
-        let refineString = ""
-        for (let availableMove of allAvailableMoves) {
-            if (Utils.sameCoords(to, availableMove.to)) {
-                continue
-            }
-            let cellInfo = oldPosition.cellInfo(availableMove.from)
-            if (cellInfo.figure !== fromCellInfo.figure) {
-                continue
-            }
-            availableDuplicates.push(availableMove.from)
-        }
-        let sameRow = false
-        let sameColumn = false
-        for (let availableDuplicate of availableDuplicates) {
-            sameRow = sameRow && availableDuplicate.y === from.y
-            sameColumn = sameColumn && availableDuplicate.x === from.x
-        }
-        if (sameRow && sameColumn) {
-            refineString = Utils.coordinateToString(from)
-        } else if (sameRow) {
-            refineString = from.y.toString()
-        } else if (sameColumn) {
-            refineString = Utils.getColumnName(from.x)
-        }
-        let toCoordinateString = Utils.coordinateToString(to)
-        returnValue = returnValue.concat(Utils.getFigureChar(fromCellInfo.figure, fromCellInfo.color), refineString, takeString, toCoordinateString)
-    }
-
-    if (false === newPosition.isCheckmate() && newPosition.isCheck()) {
-        returnValue = returnValue.concat("+")
-    }*/
-
-    // return returnValue
   }
-  /*
-  private getMoveFromAlias(position: Position, moveString: string): MoveInterface {
-    const moveStringArray = moveString.split("-")
-    return {
-      from: Utils.parseCoordinate(moveStringArray[0]),
-      to: Utils.parseCoordinate(moveStringArray[1])
-    }
-  }
-  */
-
-  /**
-   * Cancel last move
-   */
-  /*
-  cancelMove(): void {
-    if (this.moves.length === 0) {
-      throw new Error("No moves to cancel")
-    }
-    this.moves.pop()
-    this.position = Position.fromFen(this.moves[this.moves.length - 1].fen)
-  }
-  */
-  /*
-  getPositionAtMove(moveNumber: number, color: Color): Position {
-    let returnMove: MoveMetadata | null = null
-    for (const move of this.moves) {
-      if (move.number === moveNumber && move.color === color) {
-        returnMove = move
-        break
-      }
-    }
-    if (!returnMove) {
-      throw new Error("Move not found")
-    }
-    return Position.fromFen(returnMove.fen)
-  }
-  */
 
   setPrincessTransformRejected(rejected: boolean): void {
     this.position.setPrincessTransformRejected(rejected)

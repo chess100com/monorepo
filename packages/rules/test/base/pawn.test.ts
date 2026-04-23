@@ -88,18 +88,18 @@ describe("Pawn", () => {
 
     let game = Game.create()
     game = Game.fromFen("k9/9P/10/10/10/10/10/10/10/K9 w - - - 0 0")
-    assert.throw(() => game.move(c("j9"), c("j10")), "transform figure should be passed")
+    assert.throw(() => game.move(c("k9"), c("k10")), "transform figure should be passed")
 
-    game.move(c("j9"), c("j10"), { pawnTransform: Figure.Queen })
+    game.move(c("k9"), c("k10"), { pawnTransform: Figure.Queen })
 
     assert.equal(game.getFen(), "k8Q/10/10/10/10/10/10/10/10/K9 b - - - 0 0", "white pawn transform fails")
 
     game = Game.fromFen("k9/10/10/10/10/10/10/10/9p/K9 b - - - 0 0")
-    game.move(c("j2"), c("j1"), { pawnTransform: Figure.Queen })
+    game.move(c("k2"), c("k1"), { pawnTransform: Figure.Queen })
     assert.equal(game.getFen(), "k9/10/10/10/10/10/10/10/10/K8q w - - - 0 1", "black pawn transform fails")
 
     game = Game.fromFen("k9/10/10/10/10/10/10/10/9p/K9 b - - - 0 0")
-    game.move(c("j2"), c("j1"), { pawnTransform: Figure.Bishop })
+    game.move(c("k2"), c("k1"), { pawnTransform: Figure.Bishop })
     assert.equal(game.getFen(), "k9/10/10/10/10/10/10/10/10/K8b w - - - 0 1", "black pawn transform fails")
 
   })
@@ -108,11 +108,11 @@ describe("Pawn", () => {
 
     let game = Game.create()
     game = Game.fromFen("k7r1/9P/10/10/10/10/10/10/10/K9 w - - - 0 0")
-    game.move(c("j9"), c("i10"), { pawnTransform: Figure.Queen })
+    game.move(c("k9"), c("i10"), { pawnTransform: Figure.Queen })
     game = Game.fromFen("k7Q1/10/10/10/10/10/10/10/10/K9 b - - - 0 0")
 
     game = Game.fromFen("k9/10/10/10/10/10/10/10/9p/K7R1 b - - - 0 0")
-    game.move(c("j2"), c("i1"), { pawnTransform: Figure.Queen })
+    game.move(c("k2"), c("i1"), { pawnTransform: Figure.Queen })
     game = Game.fromFen("k9/10/10/10/10/10/10/10/10/K7q1 w - - - 0 1")
 
   })

@@ -9,8 +9,8 @@ describe("Prince", () => {
     it("eat king", () => {
         let game = Game.create()
         game = Game.fromFen("c8k/10/10/10/10/10/10/10/9Q/9K w - - - 0 0")
-        game.move(c("j2"), c("j10"))
-        assert.equal(game.getFen(), "k8Q/10/10/10/10/10/10/10/10/9K b - - - 1 0")
+        game.move(c("k2"), c("k10"))
+        assert.equal(game.getFen(), "k8Q/10/10/10/10/10/10/10/10/9K b - - - 0 0")
     })
 
     it("no check if prince on board", () => {

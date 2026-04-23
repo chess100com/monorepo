@@ -10,10 +10,10 @@ describe("King moves", () => {
   it("base moves", () => {
 
     let game = Game.fromFen("k9/10/10/10/9Q/10/10/10/10/9K w - - - 0 0")
-    assert.isTrue(game.canMove(c("j1"), c("j2")), "j1j2")
-    assert.isTrue(game.canMove(c("j1"), c("i1")), "j1i1")
-    assert.isTrue(game.canMove(c("j1"), c("i2")), "j1i2")
-    assert.isFalse(game.canMove(c("j1"), c("a1")), "j1a1")
+    assert.isTrue(game.canMove(c("k1"), c("k2")), "k1k2")
+    assert.isTrue(game.canMove(c("k1"), c("i1")), "k1i1")
+    assert.isTrue(game.canMove(c("k1"), c("i2")), "k1i2")
+    assert.isFalse(game.canMove(c("k1"), c("a1")), "k1a1")
 
     game = Game.fromFen("k9/10/10/10/9Q/10/10/8p1/7PK1/10 w - - - 0 0")
     assert.isTrue(game.canMove(c("i2"), c("i3")), "i2i3")

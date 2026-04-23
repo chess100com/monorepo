@@ -284,8 +284,10 @@ export class Position {
         currentFigure = extra.pawnTransform
       }
 
-    } else {
+    } else if (toCellInfo.empty) {
       newPosition.semiMove++
+    } else {
+      newPosition.semiMove = 0
     }
 
     if (this.queenJustEaten) {
@@ -525,6 +527,58 @@ export class Position {
     return !this.isCheck() && this.getAvailableMoves().length === 0
   }
 
+  isFiftyMoveRule(): boolean {
+    return this.semiMove >= 100
+  }
+
+  /**
+   * Conservative insufficient material: only truly dead draws.
+   * K vs K, K vs K+N, K vs K+B, K+B vs K+B with bishops on same color squares.
+   * Any pawn, rook, queen, prince, or princess on the board disqualifies.
+   */
+  isInsufficientMaterial(): boolean {
+    const minorsByColor: Record<number, Figure[]> = { [Color.White]: [], [Color.Black]: [] }
+    const bishopSquareByColor: Record<number, number[]> = { [Color.White]: [], [Color.Black]: [] }
+
+    for (let x = 1; x <= 10; x++) {
+      for (let y = 1; y <= 10; y++) {
+        const cell = this.board[x][y]
+        if (cell.empty || cell.figure === Figure.King) {
+          continue
+        }
+        if (cell.figure !== Figure.Bishop && cell.figure !== Figure.Knight) {
+          return false
+        }
+        minorsByColor[cell.color].push(cell.figure)
+        if (cell.figure === Figure.Bishop) {
+          bishopSquareByColor[cell.color].push((x + y) % 2)
+        }
+      }
+    }
+
+    const w = minorsByColor[Color.White]
+    const b = minorsByColor[Color.Black]
+
+    if (w.length === 0 && b.length === 0) return true
+    if (w.length === 0 && b.length === 1) return true
+    if (b.length === 0 && w.length === 1) return true
+    if (w.length === 1 && b.length === 1
+      && w[0] === Figure.Bishop && b[0] === Figure.Bishop
+      && bishopSquareByColor[Color.White][0] === bishopSquareByColor[Color.Black][0]) {
+      return true
+    }
+    return false
+  }
+
+  /**
+   * Returns a stable key identifying the position for threefold-repetition purposes.
+   * Excludes halfmove clock and full move counter.
+   */
+  getRepetitionKey(): string {
+    const parts = this.getFen().split(" ")
+    return parts.slice(0, 5).join(" ")
+  }
+
   availableMoves(coord: CoordinateInterface): CoordinateInterface[] {
     const returnValue: CoordinateInterface[] = []
     for (const availableMove of this.getAvailableMoves()) {
@@ -615,6 +669,8 @@ export class Position {
       throw new Error("Queen not have been just eaten")
     }
     this.princessTransformJustRejected = rejected
+    this.baseAvailableMoves = null
+    this.attackedCoords = null
     this.buildAvailableMoves()
   }
 

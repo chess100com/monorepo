@@ -62,15 +62,19 @@ export const getKingMoves = (c: CoordinateInterface, color: Color, position: Pos
 	}
 
 	/**
-	 * Castling moves
+	 * Castling moves — only meaningful for the side to move. Computing this for
+	 * the opponent triggers isKingUnderAttack, which may recurse through the
+	 * getAttackedCoords cache while it is still being populated.
 	 */
-	const isUnderAttack = position.isKingUnderAttack(color);
-	if (!isUnderAttack) {
-		if (can00(c, color, position)) {
-			returnValue.push({ y: c.y, x: 8 });
-		}
-		if (can000(c, color, position)) {
-			returnValue.push({ y: c.y, x: 3 });
+	if (color === position.getMovingColor()) {
+		const isUnderAttack = position.isKingUnderAttack(color);
+		if (!isUnderAttack) {
+			if (can00(c, color, position)) {
+				returnValue.push({ y: c.y, x: 8 });
+			}
+			if (can000(c, color, position)) {
+				returnValue.push({ y: c.y, x: 3 });
+			}
 		}
 	}
 	/*const y = c.y

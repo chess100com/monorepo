@@ -60,7 +60,7 @@ export interface BoardInterface extends BaseBoardInterface {
 /**
  * Interface for coordinates on board
  * Starts from 1, end with 10
- * x: 1..10 (a..j)
+ * x: 1..10 (a..k)
  * y: 1..10
  * {x:2,y:2} it is "b2" coordinate
  */
@@ -69,7 +69,7 @@ export interface CoordinateInterface {
     readonly y: number
 }
 
-export const ColumnNames: string[] = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j"]
+export const ColumnNames: string[] = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "k"]
 
 export interface MoveInterface {
     readonly from: CoordinateInterface,

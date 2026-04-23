@@ -14,13 +14,13 @@ describe("Heavy figures moves", () => {
         assert.isTrue(game.fromPosition);
 
         assert.isTrue(game.canMove(c("f6"), c("a1")), "f6a1")
-        assert.isTrue(game.canMove(c("f6"), c("j10")), "f6j10")
+        assert.isTrue(game.canMove(c("f6"), c("k10")), "f6k10")
         assert.isTrue(game.canMove(c("f6"), c("b10")), "f6b10")
-        assert.isTrue(game.canMove(c("f6"), c("j2")), "f6j2")
+        assert.isTrue(game.canMove(c("f6"), c("k2")), "f6k2")
         assert.isTrue(game.canMove(c("f6"), c("f10")), "f6f10")
         assert.isTrue(game.canMove(c("f6"), c("f1")), "f6f1")
         assert.isTrue(game.canMove(c("f6"), c("a6")), "f6a6")
-        assert.isTrue(game.canMove(c("f6"), c("j6")), "f6j6")
+        assert.isTrue(game.canMove(c("f6"), c("k6")), "f6k6")
 
         const availableMoves = game.availableMoves(c("f6"))
         assert.equal(availableMoves.length, 35)
@@ -44,7 +44,7 @@ describe("Heavy figures moves", () => {
         assert.isTrue(game.canMove(c("f6"), c("f10")), "f6f10")
         assert.isTrue(game.canMove(c("f6"), c("f1")), "f6f1")
         assert.isTrue(game.canMove(c("f6"), c("a6")), "f6a6")
-        assert.isTrue(game.canMove(c("f6"), c("j6")), "f6j6")
+        assert.isTrue(game.canMove(c("f6"), c("k6")), "f6k6")
 
         game = Game.fromFen("k9/10/10/5P4/4PRp3/5p4/10/10/10/9K w - - - 0 0")
         assert.isTrue(game.canMove(c("f6"), c("g6")), "f6g6")

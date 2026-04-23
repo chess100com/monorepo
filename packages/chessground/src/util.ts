@@ -8,7 +8,7 @@ export const allKeys: readonly cg.Key[] = Array.prototype.concat(
 
 export const pos2key = (pos: cg.Pos): cg.Key => allKeys[10 * pos[0] + pos[1]];
 
-export const key2pos = (k: cg.Key): cg.Pos => [k.charCodeAt(0) - 97, k.length > 2 ? 9 : (k.charCodeAt(1) - 49)];
+export const key2pos = (k: cg.Key): cg.Pos => [cg.files.indexOf(k[0] as cg.File), k.length > 2 ? 9 : (k.charCodeAt(1) - 49)];
 
 export const uciToMove = (uci: string | undefined): cg.Key[] | undefined => {
   if (!uci) return undefined;

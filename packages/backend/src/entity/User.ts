@@ -17,6 +17,9 @@ export class User {
   @Column()
   password!: string;
 
+  @Column({ type: 'integer', default: 1500 })
+  rating!: number;
+
   @CreateDateColumn()
   created!: Date;
 

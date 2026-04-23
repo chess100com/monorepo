@@ -92,7 +92,7 @@ router.post('/my-info', asyncHandler(async (req: Request, res: Response) => {
     return;
   }
 
-  res.status(200).json({ username: user.username, email: user.email });
+  res.status(200).json({ username: user.username, email: user.email, rating: user.rating });
 }));
 
 export default router;

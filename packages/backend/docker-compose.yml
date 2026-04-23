@@ -1,6 +1,8 @@
 services:
   backend:
-    build: .
+    build:
+      context: ../..
+      dockerfile: packages/backend/Dockerfile
     ports:
       - "${PORT:-3001}:3000"
     environment:
@@ -13,11 +15,27 @@ services:
       - REDIS_HOST=redis
       - REDIS_PORT=6379
       - SESSION_SECRET=test-secret
+      # Short clock so flag-fall tests complete inside the vitest timeout.
+      - GAME_INITIAL_TIME_MS=3000
+      - GAME_INCREMENT_MS=0
+      - SENDMAIL_URL=http://external-mock:4000/mail/send
+      # Tests read this URL back from the mock mailbox and call it from the host,
+      # so the backend's host-exposed port (3001) is what we advertise.
+      - API_PUBLIC_URL=http://localhost:${PORT:-3001}/
     depends_on:
       postgres:
         condition: service_healthy
       redis:
         condition: service_healthy
+      external-mock:
+        condition: service_started
+
+  external-mock:
+    build:
+      context: ../..
+      dockerfile: packages/external-mock/Dockerfile
+    ports:
+      - "${EXTERNAL_MOCK_PORT:-4001}:4000"
 
   postgres:
     image: postgres:16-alpine
@@ -32,7 +50,7 @@ services:
       retries: 10
 
   redis:
-    image: redis:7-alpine
+    image: redis/redis-stack-server:latest
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 2s

@@ -4,6 +4,7 @@ const { spawn, execSync } = require('child_process');
 const path = require('path');
 
 const PORT = 3001;
+const EXTERNAL_MOCK_PORT = 4001;
 const BASE_URL = `http://localhost:${PORT}`;
 const STARTUP_TIMEOUT = 60_000;
 const ROOT = path.resolve(__dirname, '..');
@@ -27,7 +28,11 @@ async function waitForServer(url, timeout) {
 }
 
 async function main() {
-  execSync('docker compose up -d --build', { cwd: ROOT, stdio: 'inherit', env: { ...process.env, PORT: String(PORT) } });
+  execSync('docker compose up -d --build', {
+    cwd: ROOT,
+    stdio: 'inherit',
+    env: { ...process.env, PORT: String(PORT), EXTERNAL_MOCK_PORT: String(EXTERNAL_MOCK_PORT) },
+  });
 
   let exitCode = 0;
   try {
@@ -38,7 +43,11 @@ async function main() {
       {
         cwd: ROOT,
         stdio: 'inherit',
-        env: { ...process.env, TEST_PORT: String(PORT) },
+        env: {
+          ...process.env,
+          TEST_PORT: String(PORT),
+          EXTERNAL_MOCK_URL: `http://localhost:${EXTERNAL_MOCK_PORT}`,
+        },
       }
     );
 
