@@ -11,6 +11,7 @@
   },
   "scripts": {
     "start": "ts-node src/index.ts",
+    "build": "tsc -b",
     "test": "node scripts/setup-tests.js",
     "check-ts": "tsc --noEmit",
     "lint": "oxlint",
