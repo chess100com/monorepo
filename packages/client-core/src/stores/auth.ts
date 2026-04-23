@@ -1,11 +1,12 @@
 import { makeAutoObservable, runInAction } from 'mobx';
+import type { GameType } from '@chess100com/rules';
 import { apiFetch, HttpError } from '../api';
 import { disconnectSocket } from '../socket';
 
 export interface CurrentUser {
   username: string;
   email: string;
-  rating: number;
+  ratings: Partial<Record<GameType, number>>;
 }
 
 export type AuthStatus = 'unknown' | 'authenticated' | 'anonymous';

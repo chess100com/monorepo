@@ -75,11 +75,15 @@ async function registerWithCore(s: Session): Promise<void> {
 
   // The cookie is only available after /login. Fold it into socketOptions so
   // that the socket handshake (which happens on the first getSocket() call)
-  // carries the session cookie.
+  // carries the session cookie. Lowercase `cookie` is deliberate: engine.io-
+  // client mutates `extraHeaders` on the first handshake by wrapping a string
+  // `cookie` into an array (for its node-side cookie-jar logic). An uppercase
+  // `Cookie` is left as-is and would get clobbered by an empty `cookie: []`
+  // sibling on reconnect; the lowercase form survives that mutation cleanly.
   s.core.configureClientCore({
     socketOptions: {
       ...s.core.clientCoreConfig.socketOptions,
-      extraHeaders: { Cookie: s.bag.cookie },
+      extraHeaders: { cookie: s.bag.cookie },
     },
   });
   s.username = username;
@@ -196,6 +200,176 @@ describe('client-core end-to-end via backend container', () => {
 
       expect(white.root.game.state?.result).toBe('1-0');
       expect(black.root.game.state?.result).toBe('1-0');
+    } finally {
+      cleanupSession(alice);
+      cleanupSession(bob);
+    }
+  });
+
+  it('reconnects mid-game: state rehydrates and a move from the new socket goes through', async () => {
+    const alice = await createSession();
+    const bob = await createSession();
+
+    try {
+      await registerWithCore(alice);
+      await registerWithCore(bob);
+
+      alice.root.lobby.subscribe();
+      bob.root.lobby.subscribe();
+      alice.root.lobby.joinQueue();
+      bob.root.lobby.joinQueue();
+
+      await waitUntil(() => alice.root.lobby.matchedGame !== null);
+      await waitUntil(() => bob.root.lobby.matchedGame !== null);
+
+      const aMatch = alice.root.lobby.matchedGame;
+      const bMatch = bob.root.lobby.matchedGame;
+      if (!aMatch || !bMatch) throw new Error('matchedGame missing after waitUntil');
+
+      await Promise.all([
+        cookieStore.run(alice.bag, () => alice.root.game.init(aMatch.gameId)),
+        cookieStore.run(bob.bag, () => bob.root.game.init(bMatch.gameId)),
+      ]);
+
+      await waitUntil(() => alice.root.game.state !== null);
+      await waitUntil(() => bob.root.game.state !== null);
+
+      const white = aMatch.color === 'white' ? alice : bob;
+      const black = aMatch.color === 'white' ? bob : alice;
+
+      // white plays a2-a3 — it's now black's turn
+      white.root.game.move({ x: 1, y: 2 }, { x: 1, y: 3 });
+      await waitUntil(() => (black.root.game.state?.moves.length ?? 0) === 1);
+
+      const fenBeforeReconnect = black.root.game.state?.currentFen;
+      expect(fenBeforeReconnect).toBeTruthy();
+      expect(black.root.game.isMyTurn).toBe(true);
+
+      // Simulate a network drop on black's side. disconnectSocket() tears
+      // down the module-level singleton; init() below re-creates it via
+      // getSocket() and rejoins the game room. socket.io-client mutates the
+      // options object with internal bookkeeping (transports, cookie jar,
+      // parsed URL parts); spreading that back in confuses the next connect,
+      // so we hand init() a clean options object.
+      black.core.disconnectSocket();
+      black.root.game.reset();
+      expect(black.root.game.state).toBeNull();
+      black.core.configureClientCore({
+        socketOptions: {
+          withCredentials: true,
+          autoConnect: true,
+          forceNew: true,
+          extraHeaders: { cookie: black.bag.cookie },
+        },
+      });
+
+      await cookieStore.run(black.bag, () => black.root.game.init(bMatch.gameId));
+      await waitUntil(() => black.root.game.state !== null);
+
+      expect(black.root.game.state?.gameId).toBe(bMatch.gameId);
+      expect(black.root.game.state?.moves.length).toBe(1);
+      expect(black.root.game.state?.currentFen).toBe(fenBeforeReconnect);
+      expect(black.root.game.state?.turn).toBe('black');
+      expect(black.root.game.state?.status).toBe('ongoing');
+      expect(black.root.game.myColor).toBe('black');
+      expect(black.root.game.isMyTurn).toBe(true);
+
+      // The reconnected store can drive a move; both sides observe the result.
+      black.root.game.move({ x: 1, y: 9 }, { x: 1, y: 8 });
+
+      await waitUntil(() => (white.root.game.state?.moves.length ?? 0) === 2);
+      await waitUntil(() => (black.root.game.state?.moves.length ?? 0) === 2);
+
+      expect(black.root.game.state?.moves[1].alias).toBe('a9-a8');
+      expect(black.root.game.state?.turn).toBe('white');
+      expect(black.root.game.state?.currentFen).not.toBe(fenBeforeReconnect);
+      expect(white.root.game.state?.currentFen).toBe(black.root.game.state?.currentFen);
+      expect(white.root.game.isMyTurn).toBe(true);
+    } finally {
+      cleanupSession(alice);
+      cleanupSession(bob);
+    }
+  });
+
+  it('auto-reconnect after transport drop: same socket survives and state resumes', async () => {
+    const alice = await createSession();
+    const bob = await createSession();
+
+    try {
+      await registerWithCore(alice);
+      await registerWithCore(bob);
+
+      alice.root.lobby.subscribe();
+      bob.root.lobby.subscribe();
+      alice.root.lobby.joinQueue();
+      bob.root.lobby.joinQueue();
+
+      await waitUntil(() => alice.root.lobby.matchedGame !== null);
+      await waitUntil(() => bob.root.lobby.matchedGame !== null);
+
+      const aMatch = alice.root.lobby.matchedGame;
+      const bMatch = bob.root.lobby.matchedGame;
+      if (!aMatch || !bMatch) throw new Error('matchedGame missing after waitUntil');
+
+      await Promise.all([
+        cookieStore.run(alice.bag, () => alice.root.game.init(aMatch.gameId)),
+        cookieStore.run(bob.bag, () => bob.root.game.init(bMatch.gameId)),
+      ]);
+      await waitUntil(() => alice.root.game.state !== null);
+      await waitUntil(() => bob.root.game.state !== null);
+
+      const white = aMatch.color === 'white' ? alice : bob;
+      const black = aMatch.color === 'white' ? bob : alice;
+
+      white.root.game.move({ x: 1, y: 2 }, { x: 1, y: 3 });
+      await waitUntil(() => (black.root.game.state?.moves.length ?? 0) === 1);
+
+      const blackSocket = black.core.getSocket();
+      const sidBefore = blackSocket.id;
+      expect(blackSocket.connected).toBe(true);
+
+      // Yank the engine transport without touching the Socket singleton or
+      // calling socket.disconnect() — this simulates a TCP drop (wifi blip).
+      // socket.io-client's Manager keeps skipReconnect=false and auto-reconnects
+      // using the opts captured when io() was first called.
+      blackSocket.io.engine.close();
+      await waitUntil(() => !blackSocket.connected);
+      await waitUntil(() => blackSocket.connected, 10_000);
+
+      // Same Socket instance (same listeners wired up in GameStore.init still
+      // point at it); server assigned a fresh sid after the reconnect.
+      expect(black.core.getSocket()).toBe(blackSocket);
+      expect(blackSocket.id).not.toBe(sidBefore);
+
+      // The server drops room memberships when the underlying socket closes,
+      // so the client has to re-emit game:join to re-enter game:<id> before
+      // subsequent broadcasts reach it. Wait for the join response so the
+      // server has definitely registered the new socket in the room by the
+      // time we trigger the next broadcast.
+      const rejoined = new Promise<void>(resolve => {
+        blackSocket.once('game:state', () => resolve());
+      });
+      blackSocket.emit('game:join', { gameId: bMatch.gameId });
+      await rejoined;
+
+      // Black plays from the reconnected socket — the move reaches the server
+      // and the server broadcast lands on both sides through the in-room
+      // delivery (black is back in the room; white never left it).
+      black.root.game.move({ x: 1, y: 9 }, { x: 1, y: 8 });
+      await waitUntil(() => (white.root.game.state?.moves.length ?? 0) === 2);
+      await waitUntil(() => (black.root.game.state?.moves.length ?? 0) === 2);
+
+      expect(black.root.game.state?.moves[1].alias).toBe('a9-a8');
+      expect(black.root.game.state?.turn).toBe('white');
+      expect(white.root.game.state?.currentFen).toBe(black.root.game.state?.currentFen);
+
+      // And the opponent's broadcast still reaches the reconnected listener.
+      white.root.game.move({ x: 2, y: 2 }, { x: 2, y: 3 });
+      await waitUntil(() => (black.root.game.state?.moves.length ?? 0) === 3);
+
+      expect(black.root.game.state?.moves[2].alias).toBe('b2-b3');
+      expect(black.root.game.state?.turn).toBe('black');
+      expect(black.root.game.isMyTurn).toBe(true);
     } finally {
       cleanupSession(alice);
       cleanupSession(bob);

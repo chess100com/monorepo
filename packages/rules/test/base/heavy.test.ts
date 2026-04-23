@@ -10,7 +10,7 @@ describe("Heavy figures moves", () => {
 
         let game = Game.create()
 
-        game = Game.fromFen("k9/10/10/10/5Q4/10/10/10/10/9K w - - - 0 0")
+        game = Game.fromFen("k9/10/10/10/5Q4/10/10/10/10/9K w - - 0 0")
         assert.isTrue(game.fromPosition);
 
         assert.isTrue(game.canMove(c("f6"), c("a1")), "f6a1")
@@ -25,7 +25,7 @@ describe("Heavy figures moves", () => {
         const availableMoves = game.availableMoves(c("f6"))
         assert.equal(availableMoves.length, 35)
 
-        game = Game.fromFen("k9/10/10/4p1P3/5Q4/4P1p3/10/10/10/9K w - - - 0 0")
+        game = Game.fromFen("k9/10/10/4p1P3/5Q4/4P1p3/10/10/10/9K w - - 0 0")
         assert.isTrue(game.canMove(c("f6"), c("e7")), "f6e7")
         assert.isTrue(game.canMove(c("f6"), c("g5")), "f6g5")
         assert.isFalse(game.canMove(c("f6"), c("g7")), "f6g7")
@@ -40,13 +40,13 @@ describe("Heavy figures moves", () => {
     it("rook moves", () => {
 
         let game = Game.create()
-        game = Game.fromFen("k9/10/10/10/5R4/10/10/10/10/9K w - - - 0 0")
+        game = Game.fromFen("k9/10/10/10/5R4/10/10/10/10/9K w - - 0 0")
         assert.isTrue(game.canMove(c("f6"), c("f10")), "f6f10")
         assert.isTrue(game.canMove(c("f6"), c("f1")), "f6f1")
         assert.isTrue(game.canMove(c("f6"), c("a6")), "f6a6")
         assert.isTrue(game.canMove(c("f6"), c("k6")), "f6k6")
 
-        game = Game.fromFen("k9/10/10/5P4/4PRp3/5p4/10/10/10/9K w - - - 0 0")
+        game = Game.fromFen("k9/10/10/5P4/4PRp3/5p4/10/10/10/9K w - - 0 0")
         assert.isTrue(game.canMove(c("f6"), c("g6")), "f6g6")
         assert.isTrue(game.canMove(c("f6"), c("f5")), "f6f5")
         assert.isFalse(game.canMove(c("f6"), c("f7")), "f6f7")
@@ -62,7 +62,7 @@ describe("Heavy figures moves", () => {
     it("princess moves", () => {
 
         let game = Game.create()
-        game = Game.fromFen("k9/9Q/10/10/10/10/10/C9/10/9K w - - - 0 0")
+        game = Game.fromFen("k9/9Q/10/10/10/10/10/C9/10/9K w - - 0 0")
         assert.isTrue(game.canMove(c("a3"), c("a4")), "a3a4")
         assert.isTrue(game.canMove(c("a3"), c("a5")), "a3a5")
         assert.isTrue(game.canMove(c("a3"), c("b4")), "a3b4")
@@ -76,7 +76,7 @@ describe("Heavy figures moves", () => {
         assert.isFalse(game.canMove(c("a3"), c("a6")), "a3c1")
         assert.isFalse(game.canMove(c("a3"), c("b5")), "a3b5")
 
-        game = Game.fromFen("k9/9Q/10/10/2p7/1PCp6/2P7/10/10/9K w - - - 0 0")
+        game = Game.fromFen("k9/9Q/10/10/2p7/1PCp6/2P7/10/10/9K w - - 0 0")
         assert.isTrue(game.canMove(c("c5"), c("c6")), "c5c6")
         assert.isTrue(game.canMove(c("c5"), c("c7")), "c5c7")
         assert.isTrue(game.canMove(c("c5"), c("d5")), "c5d5")

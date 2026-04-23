@@ -26,18 +26,18 @@ describe("Base position", () => {
   it("semimoves", () => {
     const game = Game.create()
     game.move(c("d1"), c("d3"))
-    assert.equal(game.getFen(), "rnbcqksbnr/pppppppppp/10/10/10/10/10/3C6/PPPPPPPPPP/RNB1QKSBNR b KQkq - - 1 1")
+    assert.equal(game.getFen(), "rnbcqksbnr/pppppppppp/10/10/10/10/10/3C6/PPPPPPPPPP/RNB1QKSBNR b KQkq - 1 1")
   })
 
   it("bad fen", () => {
     assert.throw(() => Game.fromFen("rnbcqksbnr/pppppppppp/10/10/10/10/10/10/PPPPPPPPPP/RNBCQKSBNR"))
-    assert.throw(() => Game.fromFen("rnbcqksbnr/pppppppppp/10/10/10/10/10/10/PPPPPPPPPP w KQkq - - 0 1"))
-    assert.throw(() => Game.fromFen("rnbcqksbnr/pppppppppp/10/10/9Pp/10/10/10/PPPPPPPPPP/RNBCQKSBNR w KQkq - - 0 1"))
-    assert.throw(() => Game.fromFen("rnbcqksbnr/pppppppppp/10/10/10/10/10/10/PPPPPPPPPP/RNBCQKSBNZ w KQkq - - 0 1"))
-    assert.throw(() => Game.fromFen("rnbcqksbnr/pppppppppp/10/10/10/10/10/10/PPPPPPPPP/RNBCQKSBNR w KQkq - - 0 1"))
-    assert.throw(() => Game.fromFen("rnbcqksbnr/pppppppppp/10/10/10/10/10/10/PPPPPPPPPP/RNBCQKSBNR a KQkq - - 0 1"))
-    assert.throw(() => Game.fromFen("rnbcqksbnr/pppppppppp/10/10/10/10/10/10/PPPPPPPPPP/RNBCQKSBNR w KQkq - - a 1"))
-    assert.throw(() => Game.fromFen("rnbcqksbnr/pppppppppp/10/10/10/10/10/10/PPPPPPPPPP/RNBCQKSBNR w KQkq - - 0 b"))
+    assert.throw(() => Game.fromFen("rnbcqksbnr/pppppppppp/10/10/10/10/10/10/PPPPPPPPPP w KQkq - 0 1"))
+    assert.throw(() => Game.fromFen("rnbcqksbnr/pppppppppp/10/10/9Pp/10/10/10/PPPPPPPPPP/RNBCQKSBNR w KQkq - 0 1"))
+    assert.throw(() => Game.fromFen("rnbcqksbnr/pppppppppp/10/10/10/10/10/10/PPPPPPPPPP/RNBCQKSBNZ w KQkq - 0 1"))
+    assert.throw(() => Game.fromFen("rnbcqksbnr/pppppppppp/10/10/10/10/10/10/PPPPPPPPP/RNBCQKSBNR w KQkq - 0 1"))
+    assert.throw(() => Game.fromFen("rnbcqksbnr/pppppppppp/10/10/10/10/10/10/PPPPPPPPPP/RNBCQKSBNR a KQkq - 0 1"))
+    assert.throw(() => Game.fromFen("rnbcqksbnr/pppppppppp/10/10/10/10/10/10/PPPPPPPPPP/RNBCQKSBNR w KQkq - a 1"))
+    assert.throw(() => Game.fromFen("rnbcqksbnr/pppppppppp/10/10/10/10/10/10/PPPPPPPPPP/RNBCQKSBNR w KQkq - 0 b"))
   })
 
   it("find figure", () => {
@@ -70,7 +70,7 @@ describe("Base position", () => {
     assert.equal(color, Color.White);
     assert.equal(figure, Figure.Pawn);
     assert.equal(number, 1);
-    assert.equal(fen, 'rnbcqksbnr/pppppppppp/10/10/10/10/10/P9/1PPPPPPPPP/RNBCQKSBNR b KQkq - - 0 1');
+    assert.equal(fen, 'rnbcqksbnr/pppppppppp/10/10/10/10/10/P9/1PPPPPPPPP/RNBCQKSBNR b KQkq - 0 1');
     assert.equal(alias, 'a2-a3');
   });
 })

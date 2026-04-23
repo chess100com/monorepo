@@ -1,6 +1,6 @@
 // oxlint-disable typescript/no-empty-object-type
 // oxlint-disable typescript/ban-types
-export const StartFen = "rnbcqksbnr/pppppppppp/10/10/10/10/10/10/PPPPPPPPPP/RNBCQKSBNR w KQkq - - 0 1"
+export const StartFen = "rnbcqksbnr/pppppppppp/10/10/10/10/10/10/PPPPPPPPPP/RNBCQKSBNR w KQkq - 0 1"
 
 export enum Figure {
     Pawn = 1,

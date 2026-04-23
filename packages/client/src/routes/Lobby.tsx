@@ -76,7 +76,7 @@ export const Lobby = observer(() => {
   }, [lobby.matchedGame, lobby, navigate]);
 
   const username = auth.user?.username ?? '';
-  const rating = auth.user?.rating;
+  const rating = auth.user?.ratings[lobby.selectedType];
 
   return (
     <div className="page">

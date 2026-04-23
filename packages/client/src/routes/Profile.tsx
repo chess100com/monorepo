@@ -102,9 +102,13 @@ export const Profile = observer((): ReactElement => {
   return (
     <div className="page profile-page">
       <h1>{user.username}</h1>
-      <p className="profile-rating">
-        {t('profile.rating')}: <strong>{user.rating}</strong>
-      </p>
+      <ul className="profile-rating">
+        {(Object.entries(user.ratings) as [GameType, number][]).map(([type, rating]) => (
+          <li key={type}>
+            {t(`variants.${type}`)}: <strong>{rating}</strong>
+          </li>
+        ))}
+      </ul>
 
       <h2>{t('profile.myGames')}</h2>
       {error && <p className="hint">{error}</p>}

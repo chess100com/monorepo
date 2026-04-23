@@ -231,8 +231,4 @@ export class Game {
   private getMoveAlias(_oldPosition: Position, _newPosition: Position, from: CoordinateInterface, to: CoordinateInterface, _extra?: ExtraMoveData): string {
     return `${Utils.coordinateToString(from)}-${Utils.coordinateToString(to)}`
   }
-
-  setPrincessTransformRejected(rejected: boolean): void {
-    this.position.setPrincessTransformRejected(rejected)
-  }
 }

@@ -11,7 +11,7 @@ describe("Light figures moves", () => {
     it("bishop", () => {
 
         let game = Game.create()
-        game = Game.fromFen("k9/10/10/10/5B4/10/10/10/10/9K w - - - 0 0")
+        game = Game.fromFen("k9/10/10/10/5B4/10/10/10/10/9K w - - 0 0")
         assert.isTrue(game.canMove(c("f6"), c("a1")), "f6a1")
         assert.isTrue(game.canMove(c("f6"), c("k10")), "f6k10")
         assert.isTrue(game.canMove(c("f6"), c("b10")), "f6b10")
@@ -21,7 +21,7 @@ describe("Light figures moves", () => {
         assert.isFalse(game.canMove(c("f6"), c("a6")), "f6a6")
         assert.isFalse(game.canMove(c("f6"), c("k6")), "f6k6")
 
-        game = Game.fromFen("k9/10/10/4p1P3/5B4/4P1p3/10/10/10/9K w - - - 0 0")
+        game = Game.fromFen("k9/10/10/4p1P3/5B4/4P1p3/10/10/10/9K w - - 0 0")
         assert.isTrue(game.canMove(c("f6"), c("e7")), "f6e7")
         assert.isTrue(game.canMove(c("f6"), c("g5")), "f6g5")
         assert.isFalse(game.canMove(c("f6"), c("g7")), "f6g7")
@@ -36,7 +36,7 @@ describe("Light figures moves", () => {
     it("knight", () => {
 
         let game = Game.create()
-        game = Game.fromFen("k9/10/10/10/5N4/10/10/10/10/9K w - - - 0 0")
+        game = Game.fromFen("k9/10/10/10/5N4/10/10/10/10/9K w - - 0 0")
         const coord = c("f6")
         const empty: CoordinateInterface = { x: -1, y: -2 };
         assert.isTrue(game.canMove(coord, dc(coord, 1, 2) ?? empty))
@@ -48,7 +48,7 @@ describe("Light figures moves", () => {
         assert.isTrue(game.canMove(coord, dc(coord, -1, -2) ?? empty))
         assert.isTrue(game.canMove(coord, dc(coord, -2, -1) ?? empty))
 
-        game = Game.fromFen("k9/10/10/10/10/10/10/2p7/2P7/N8K w - - - 0 0")
+        game = Game.fromFen("k9/10/10/10/10/10/10/2p7/2P7/N8K w - - 0 0")
         assert.isTrue(game.canMove(c("a1"), c("b3")))
         assert.isFalse(game.canMove(c("a1"), c("c2")))
 

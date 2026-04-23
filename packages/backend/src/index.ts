@@ -8,10 +8,10 @@ import RedisStore from 'connect-redis';
 import { createAdapter } from '@socket.io/redis-adapter';
 import { GameStatus, GameType, OngoingResult, VariantStartFen } from '@chess100com/rules';
 import { redisClient } from './redis-client';
-import { In } from 'typeorm';
 import { AppDataSource } from './data-source';
 import { User } from './entity/User';
 import { Game } from './entity/Game';
+import { getUserRatings, loadAllRatings } from './elo';
 import {
   getAllQueueSizes,
   leaveAllQueues,
@@ -96,12 +96,9 @@ const parseQueueJoinPayload = (raw: unknown): GameType | null => {
 
 async function createAndAnnounceGame(pair: MatchPair): Promise<void> {
   const gameRepo = AppDataSource.getRepository(Game);
-  const players = await AppDataSource.getRepository(User).findBy({
-    id: In([pair.whiteUserId, pair.blackUserId]),
-  });
-  const byId = new Map(players.map(u => [u.id, u]));
-  const whiteRating = byId.get(pair.whiteUserId)?.rating ?? null;
-  const blackRating = byId.get(pair.blackUserId)?.rating ?? null;
+  const ratings = await getUserRatings([pair.whiteUserId, pair.blackUserId], pair.type);
+  const whiteRating = ratings.get(pair.whiteUserId) ?? null;
+  const blackRating = ratings.get(pair.blackUserId) ?? null;
   const game = gameRepo.create({
     type: pair.type,
     whiteUserId: pair.whiteUserId,
@@ -157,7 +154,8 @@ io.on('connection', (socket) => {
       socket.emit('my-info', { error: 'Unauthorized' });
       return;
     }
-    socket.emit('my-info', { username: user.username, email: user.email, rating: user.rating });
+    const ratings = await loadAllRatings(user.id);
+    socket.emit('my-info', { username: user.username, email: user.email, ratings });
   });
 
   socket.on('lobby:subscribe', async () => {

@@ -32,11 +32,11 @@ describe("Pawn", () => {
   it("make moves: g5 h6 gh", () => {
     const game = Game.create()
     game.move(c("g2"), c("g5"))
-    assert.equal(game.getFen(), "rnbcqksbnr/pppppppppp/10/10/10/6P3/10/10/PPPPPP1PPP/RNBCQKSBNR b KQkq g5 - 0 1")
+    assert.equal(game.getFen(), "rnbcqksbnr/pppppppppp/10/10/10/6P3/10/10/PPPPPP1PPP/RNBCQKSBNR b KQkq g5 0 1")
     game.move(c("h9"), c("h6"))
-    assert.equal(game.getFen(), "rnbcqksbnr/ppppppp1pp/10/10/7p2/6P3/10/10/PPPPPP1PPP/RNBCQKSBNR w KQkq h6 - 0 2")
+    assert.equal(game.getFen(), "rnbcqksbnr/ppppppp1pp/10/10/7p2/6P3/10/10/PPPPPP1PPP/RNBCQKSBNR w KQkq h6 0 2")
     game.move(c("g5"), c("h6"))
-    assert.equal(game.getFen(), "rnbcqksbnr/ppppppp1pp/10/10/7P2/10/10/10/PPPPPP1PPP/RNBCQKSBNR b KQkq - - 0 2")
+    assert.equal(game.getFen(), "rnbcqksbnr/ppppppp1pp/10/10/7P2/10/10/10/PPPPPP1PPP/RNBCQKSBNR b KQkq - 0 2")
   })
 
   it("make illegal pawn move", () => {
@@ -58,28 +58,28 @@ describe("Pawn", () => {
 
   it("takeover white", () => {
     let game = Game.create()
-    game = Game.fromFen("rnbcqksbnr/ppppppp1pp/10/10/6Pp2/10/10/10/PPPPPP1PPP/RNBCQKSBNR w KQkq h6 - 0 2")
+    game = Game.fromFen("rnbcqksbnr/ppppppp1pp/10/10/6Pp2/10/10/10/PPPPPP1PPP/RNBCQKSBNR w KQkq h6 0 2")
     game.move(c("g6"), c("h7"))
-    assert.equal(game.getFen(), "rnbcqksbnr/ppppppp1pp/10/7P2/10/10/10/10/PPPPPP1PPP/RNBCQKSBNR b KQkq - - 0 2")
+    assert.equal(game.getFen(), "rnbcqksbnr/ppppppp1pp/10/7P2/10/10/10/10/PPPPPP1PPP/RNBCQKSBNR b KQkq - 0 2")
 
-    game = Game.fromFen("rnbcqksbnr/ppppppp1pp/10/P5P3/7p2/10/10/10/PPPPPP1PPP/RNBCQKSBNR w KQkq h6 - 0 2")
+    game = Game.fromFen("rnbcqksbnr/ppppppp1pp/10/P5P3/7p2/10/10/10/PPPPPP1PPP/RNBCQKSBNR w KQkq h6 0 2")
     assert.isFalse(game.canMove(c("a7"), c("b8")))
     game.move(c("g7"), c("h8"))
-    assert.equal(game.getFen(), "rnbcqksbnr/ppppppp1pp/7P2/P9/10/10/10/10/PPPPPP1PPP/RNBCQKSBNR b KQkq - - 0 2")
+    assert.equal(game.getFen(), "rnbcqksbnr/ppppppp1pp/7P2/P9/10/10/10/10/PPPPPP1PPP/RNBCQKSBNR b KQkq - 0 2")
 
     assert.isFalse(game.canMove(c("g8"), c("h9")))
   })
 
   it("takeover black", () => {
     let game = Game.create()
-    game = Game.fromFen("rnbcqksbnr/ppppppp1pp/10/10/10/6Pp2/10/10/PPPPPP1PPP/RNBCQKSBNR b KQkq g5 - 0 2")
+    game = Game.fromFen("rnbcqksbnr/ppppppp1pp/10/10/10/6Pp2/10/10/PPPPPP1PPP/RNBCQKSBNR b KQkq g5 0 2")
     game.move(c("h5"), c("g4"))
-    assert.equal(game.getFen(), "rnbcqksbnr/ppppppp1pp/10/10/10/10/6p3/10/PPPPPP1PPP/RNBCQKSBNR w KQkq - - 0 3")
+    assert.equal(game.getFen(), "rnbcqksbnr/ppppppp1pp/10/10/10/10/6p3/10/PPPPPP1PPP/RNBCQKSBNR w KQkq - 0 3")
 
-    game = Game.fromFen("rnbcqksbnr/ppppppp1pp/10/10/10/6P3/p6p2/10/PPPPPP1PPP/RNBCQKSBNR b KQkq g5 - 0 2")
+    game = Game.fromFen("rnbcqksbnr/ppppppp1pp/10/10/10/6P3/p6p2/10/PPPPPP1PPP/RNBCQKSBNR b KQkq g5 0 2")
     assert.throws(() => game.move(c("a4"), c("b3")))
     game.move(c("h4"), c("g3"))
-    assert.equal(game.getFen(), "rnbcqksbnr/ppppppp1pp/10/10/10/10/p9/6p3/PPPPPP1PPP/RNBCQKSBNR w KQkq - - 0 3")
+    assert.equal(game.getFen(), "rnbcqksbnr/ppppppp1pp/10/10/10/10/p9/6p3/PPPPPP1PPP/RNBCQKSBNR w KQkq - 0 3")
 
     assert.isFalse(game.canMove(c("h3"), c("g2")))
   })
@@ -87,33 +87,33 @@ describe("Pawn", () => {
   it("pawn transformations", () => {
 
     let game = Game.create()
-    game = Game.fromFen("k9/9P/10/10/10/10/10/10/10/K9 w - - - 0 0")
+    game = Game.fromFen("k9/9P/10/10/10/10/10/10/10/K9 w - - 0 0")
     assert.throw(() => game.move(c("k9"), c("k10")), "transform figure should be passed")
 
     game.move(c("k9"), c("k10"), { pawnTransform: Figure.Queen })
 
-    assert.equal(game.getFen(), "k8Q/10/10/10/10/10/10/10/10/K9 b - - - 0 0", "white pawn transform fails")
+    assert.equal(game.getFen(), "k8Q/10/10/10/10/10/10/10/10/K9 b - - 0 0", "white pawn transform fails")
 
-    game = Game.fromFen("k9/10/10/10/10/10/10/10/9p/K9 b - - - 0 0")
+    game = Game.fromFen("k9/10/10/10/10/10/10/10/9p/K9 b - - 0 0")
     game.move(c("k2"), c("k1"), { pawnTransform: Figure.Queen })
-    assert.equal(game.getFen(), "k9/10/10/10/10/10/10/10/10/K8q w - - - 0 1", "black pawn transform fails")
+    assert.equal(game.getFen(), "k9/10/10/10/10/10/10/10/10/K8q w - - 0 1", "black pawn transform fails")
 
-    game = Game.fromFen("k9/10/10/10/10/10/10/10/9p/K9 b - - - 0 0")
+    game = Game.fromFen("k9/10/10/10/10/10/10/10/9p/K9 b - - 0 0")
     game.move(c("k2"), c("k1"), { pawnTransform: Figure.Bishop })
-    assert.equal(game.getFen(), "k9/10/10/10/10/10/10/10/10/K8b w - - - 0 1", "black pawn transform fails")
+    assert.equal(game.getFen(), "k9/10/10/10/10/10/10/10/10/K8b w - - 0 1", "black pawn transform fails")
 
   })
 
   it("pawn transformations with eat", () => {
 
     let game = Game.create()
-    game = Game.fromFen("k7r1/9P/10/10/10/10/10/10/10/K9 w - - - 0 0")
+    game = Game.fromFen("k7r1/9P/10/10/10/10/10/10/10/K9 w - - 0 0")
     game.move(c("k9"), c("i10"), { pawnTransform: Figure.Queen })
-    game = Game.fromFen("k7Q1/10/10/10/10/10/10/10/10/K9 b - - - 0 0")
+    game = Game.fromFen("k7Q1/10/10/10/10/10/10/10/10/K9 b - - 0 0")
 
-    game = Game.fromFen("k9/10/10/10/10/10/10/10/9p/K7R1 b - - - 0 0")
+    game = Game.fromFen("k9/10/10/10/10/10/10/10/9p/K7R1 b - - 0 0")
     game.move(c("k2"), c("i1"), { pawnTransform: Figure.Queen })
-    game = Game.fromFen("k9/10/10/10/10/10/10/10/10/K7q1 w - - - 0 1")
+    game = Game.fromFen("k9/10/10/10/10/10/10/10/10/K7q1 w - - 0 1")
 
   })
 

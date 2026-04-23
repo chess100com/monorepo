@@ -2,6 +2,7 @@ import { observer } from 'mobx-react-lite';
 import type { ChangeEvent, ReactNode } from 'react';
 import { Link, NavLink } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { GameType } from '@chess100com/rules';
 import { SUPPORTED_LANGUAGES, LANGUAGE_LABELS, type Language } from '@chess100com/client-core';
 import { useStore } from '../stores/context';
 
@@ -42,7 +43,9 @@ export const Layout = observer(({ children }: { children: ReactNode }) => {
                 <NavLink to="/profile" className={navClass}>
                   <span className="nav-user">
                     {auth.user?.username}
-                    {auth.user && <span className="nav-user-rating"> · {auth.user.rating}</span>}
+                    {auth.user && (
+                      <span className="nav-user-rating"> · {auth.user.ratings[GameType.Heirs] ?? 1500}</span>
+                    )}
                   </span>
                 </NavLink>
                 <button className="nav-link nav-link-button" onClick={() => auth.logout()}>

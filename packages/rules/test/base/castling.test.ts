@@ -11,25 +11,25 @@ describe("Castling", () => {
 
   it("Base castling", () => {
 
-    const startFen = "1k8/10/10/10/10/10/10/10/10/R4K3R w KQ - - 0 1"
+    const startFen = "1k8/10/10/10/10/10/10/10/10/R4K3R w KQ - 0 1"
     let game = Game.fromFen(startFen)
     game.move(c("f1"), c("c1"))
-    assert.equal(game.getFen(), "1k8/10/10/10/10/10/10/10/10/2KR5R b - - - 1 1")
+    assert.equal(game.getFen(), "1k8/10/10/10/10/10/10/10/10/2KR5R b - - 1 1")
 
     game = Game.fromFen(startFen)
     game.move(c("f1"), c("h1"))
-    assert.equal(game.getFen(), "1k8/10/10/10/10/10/10/10/10/R5RK2 b - - - 1 1")
+    assert.equal(game.getFen(), "1k8/10/10/10/10/10/10/10/10/R5RK2 b - - 1 1")
   })
 
   it("Can`t castling with attacked field", () => {
-    const game = Game.fromFen("1kr3r3/10/10/10/10/10/10/10/10/R4K3R w KQ - - 0 1")
+    const game = Game.fromFen("1kr3r3/10/10/10/10/10/10/10/10/R4K3R w KQ - 0 1")
     assert.isFalse(game.canMove(c("f1"), c("c1")))
     assert.isFalse(game.canMove(c("f1"), c("h1")))
   })
 
 
-  const EmptyFenWhiteMove = "10/10/10/10/10/10/10/10/10/10 w KQkq - - 0 1"
-  const EmptyFenBlackMove = "10/10/10/10/10/10/10/10/10/10 b KQkq - - 0 1"
+  const EmptyFenWhiteMove = "10/10/10/10/10/10/10/10/10/10 w KQkq - 0 1"
+  const EmptyFenBlackMove = "10/10/10/10/10/10/10/10/10/10 b KQkq - 0 1"
 
   it('castle-can-move-00', () => {
     const emptyCols = [7, 8, 9];
@@ -72,7 +72,7 @@ describe("Castling", () => {
         JSON.stringify({ move, color })
       );
       assert.isFalse(
-        getGoodPos(`10/10/10/10/10/10/10/10/10/10 ${color === Color.White ? 'w' : 'b'} - - - 0 1`)
+        getGoodPos(`10/10/10/10/10/10/10/10/10/10 ${color === Color.White ? 'w' : 'b'} - - 0 1`)
           .canMove(...move),
         JSON.stringify({ move, color })
       );
@@ -156,7 +156,7 @@ describe("Castling", () => {
         JSON.stringify({ move, color })
       );
       assert.isFalse(
-        getGoodPos(`10/10/10/10/10/10/10/10/10/10 ${color === Color.White ? 'w' : 'b'} - - - 0 1`)
+        getGoodPos(`10/10/10/10/10/10/10/10/10/10 ${color === Color.White ? 'w' : 'b'} - - 0 1`)
           .canMove(...move),
         JSON.stringify({ move, color })
       );

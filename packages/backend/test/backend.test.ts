@@ -77,10 +77,12 @@ describe('Registration', () => {
       },
     });
     expect(res.status).toBe(200);
-    const body = await res.json() as { username: string; email: string; rating: number };
+    const body = await res.json() as { username: string; email: string; ratings: Record<string, number> };
     expect(body.username).toBe(username);
     expect(body.email).toBe(email);
-    expect(body.rating).toBe(1500);
+    // A fresh user has no user_rating rows yet — every supported game type
+    // defaults to 1500 so the client can render immediately.
+    expect(body.ratings.heirs).toBe(1500);
   });
 
   it('socket my-info returns correct username and email', async () => {
@@ -704,6 +706,80 @@ describe('Game play over socket', () => {
   });
 });
 
+describe('Socket reconnect during a game', () => {
+  it('state syncs after reconnect and a move from the reconnected socket goes through', async () => {
+    const alice = await registerAndLogin();
+    const bob = await registerAndLogin();
+    const aliceSocket = connectSocket(alice.cookie);
+    const bobSocket = connectSocket(bob.cookie);
+
+    try {
+      await Promise.all([
+        new Promise<void>(resolve => { aliceSocket.on('connect', () => resolve()); }),
+        new Promise<void>(resolve => { bobSocket.on('connect', () => resolve()); }),
+      ]);
+      const aliceStartP = waitFor<{ gameId: string; color: 'white' | 'black' }>(aliceSocket, 'game:start');
+      const bobStartP = waitFor<{ gameId: string; color: 'white' | 'black' }>(bobSocket, 'game:start');
+      aliceSocket.emit('queue:join', { type: 'heirs' });
+      bobSocket.emit('queue:join', { type: 'heirs' });
+      const [aliceStart] = await Promise.all([aliceStartP, bobStartP]);
+      const gameId = aliceStart.gameId;
+
+      const blackPlayer = aliceStart.color === 'white' ? bob : alice;
+      const whiteSocket = aliceStart.color === 'white' ? aliceSocket : bobSocket;
+      const blackSocket = aliceStart.color === 'white' ? bobSocket : aliceSocket;
+
+      const whiteJoinP = waitFor<GameStateEvt>(whiteSocket, 'game:state');
+      const blackJoinP = waitFor<GameStateEvt>(blackSocket, 'game:state');
+      whiteSocket.emit('game:join', { gameId });
+      blackSocket.emit('game:join', { gameId });
+      await Promise.all([whiteJoinP, blackJoinP]);
+
+      // white plays a2-a3 — it's now black's turn
+      const afterWhiteP = waitFor<GameStateEvt>(blackSocket, 'game:state');
+      whiteSocket.emit('move', { gameId, from: { x: 1, y: 2 }, to: { x: 1, y: 3 } });
+      const afterWhite = await afterWhiteP;
+      expect(afterWhite.moves.length).toBe(1);
+      expect(afterWhite.turn).toBe('black');
+      const fenBeforeReconnect = afterWhite.currentFen;
+
+      // black drops mid-game and reconnects with a fresh socket on the same session
+      blackSocket.disconnect();
+      const reconnected = connectSocket(blackPlayer.cookie);
+      await new Promise<void>(resolve => { reconnected.on('connect', () => resolve()); });
+
+      try {
+        const recoveredP = waitFor<GameStateEvt>(reconnected, 'game:state');
+        reconnected.emit('game:join', { gameId });
+        const recovered = await recoveredP;
+        expect(recovered.gameId).toBe(gameId);
+        expect(recovered.moves.length).toBe(1);
+        expect(recovered.currentFen).toBe(fenBeforeReconnect);
+        expect(recovered.turn).toBe('black');
+        expect(recovered.status).toBe('ongoing');
+
+        // the reconnected socket plays a9-a8; both sockets see the updated state
+        const whiteAfterP = waitFor<GameStateEvt>(whiteSocket, 'game:state');
+        const reconnectedAfterP = waitFor<GameStateEvt>(reconnected, 'game:state');
+        reconnected.emit('move', { gameId, from: { x: 1, y: 9 }, to: { x: 1, y: 8 } });
+        const [wState, rState] = await Promise.all([whiteAfterP, reconnectedAfterP]);
+
+        expect(rState.moves.length).toBe(2);
+        expect(rState.moves[1].alias).toBe('a9-a8');
+        expect(rState.turn).toBe('white');
+        expect(rState.currentFen).not.toBe(fenBeforeReconnect);
+        expect(wState.moves.length).toBe(2);
+        expect(wState.currentFen).toBe(rState.currentFen);
+      } finally {
+        reconnected.disconnect();
+      }
+    } finally {
+      aliceSocket.disconnect();
+      bobSocket.disconnect();
+    }
+  });
+});
+
 describe('Clock', () => {
   async function queueUpPair() {
     const alice = await registerAndLogin();
@@ -903,15 +979,15 @@ describe('Rating', () => {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Cookie: winnerCookie },
       });
-      const winnerInfo = await winnerRes.json() as { rating: number };
-      expect(winnerInfo.rating).toBe(1516);
+      const winnerInfo = await winnerRes.json() as { ratings: Record<string, number> };
+      expect(winnerInfo.ratings.heirs).toBe(1516);
 
       const loserRes = await fetch(`${BASE_URL}/my-info`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Cookie: loserCookie },
       });
-      const loserInfo = await loserRes.json() as { rating: number };
-      expect(loserInfo.rating).toBe(1484);
+      const loserInfo = await loserRes.json() as { ratings: Record<string, number> };
+      expect(loserInfo.ratings.heirs).toBe(1484);
     } finally {
       aliceSocket.disconnect();
       bobSocket.disconnect();

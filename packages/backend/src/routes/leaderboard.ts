@@ -3,7 +3,7 @@ import type { Request, Response, NextFunction } from 'express';
 import { GameType } from '@chess100com/rules';
 import { AppDataSource } from '../data-source';
 import { User } from '../entity/User';
-import { Game } from '../entity/Game';
+import { UserRating } from '../entity/UserRating';
 
 const asyncHandler = (fn: (req: Request, res: Response, next: NextFunction) => Promise<void>) =>
   (req: Request, res: Response, next: NextFunction): void => {
@@ -19,29 +19,19 @@ interface TopPlayer {
   rating: number;
 }
 
+/**
+ * Top players for a given game type, sorted by that type's rating DESC with
+ * username ASC as a stable tiebreaker. Only users who have a `user_rating`
+ * row for the type appear — i.e. users who have finished at least one game
+ * of that variant (ratings rows are written by `applyEloUpdate`).
+ */
 async function topForType(type: GameType): Promise<TopPlayer[]> {
-  const userRepo = AppDataSource.getRepository(User);
-  // Filter to users who have played at least one game of this type; sort by
-  // rating DESC, then username ASC for a stable tiebreaker. The participants
-  // subquery covers both colors in one pass.
-  const rows = await userRepo
-    .createQueryBuilder('u')
-    .select(['u.id AS id', 'u.username AS username', 'u.rating AS rating'])
-    .where(qb => {
-      const sub = qb.subQuery()
-        .select('g."whiteUserId"')
-        .from(Game, 'g')
-        .where('g.type = :type')
-        .getQuery();
-      const sub2 = qb.subQuery()
-        .select('g2."blackUserId"')
-        .from(Game, 'g2')
-        .where('g2.type = :type')
-        .getQuery();
-      return `u.id IN (${sub} UNION ${sub2})`;
-    })
-    .setParameter('type', type)
-    .orderBy('u.rating', 'DESC')
+  const rows = await AppDataSource.getRepository(UserRating)
+    .createQueryBuilder('ur')
+    .innerJoin(User, 'u', 'u.id = ur."userId"')
+    .select(['u.id AS id', 'u.username AS username', 'ur.rating AS rating'])
+    .where('ur."gameType" = :type', { type })
+    .orderBy('ur.rating', 'DESC')
     .addOrderBy('u.username', 'ASC')
     .limit(TOP_N)
     .getRawMany<TopPlayer>();

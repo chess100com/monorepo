@@ -7,6 +7,7 @@ import { AppDataSource } from '../data-source';
 import { User } from '../entity/User';
 import { RegisterDto } from '../dto/RegisterDto';
 import { LoginDto } from '../dto/LoginDto';
+import { loadAllRatings } from '../elo';
 
 type SessionWithUser = Express.Request['session'] & { userId?: number };
 
@@ -92,7 +93,8 @@ router.post('/my-info', asyncHandler(async (req: Request, res: Response) => {
     return;
   }
 
-  res.status(200).json({ username: user.username, email: user.email, rating: user.rating });
+  const ratings = await loadAllRatings(user.id);
+  res.status(200).json({ username: user.username, email: user.email, ratings });
 }));
 
 export default router;

@@ -40,12 +40,6 @@ export class Position {
   private moveNumber = 1
   private semiMove = 0
 
-  private queenJustEaten = false
-  private princessTransformJustRejected = false
-
-  private whitePrincessTransformRejected = false
-  private blackPrincessTransformRejected = false
-
   private takeoverCoord: CoordinateInterface | null = null
 
   private allAvailableMoves: MoveInterface[] | null = null
@@ -71,7 +65,7 @@ export class Position {
     }
 
     const splitSpaces = fen.split(" ")
-    if (splitSpaces.length !== 7) {
+    if (splitSpaces.length !== 6) {
       throw new Error(`Bad FEN: ${fen}`)
     }
 
@@ -143,29 +137,16 @@ export class Position {
     const takeoverString = splitSpaces[3]
     this.takeoverCoord = (takeoverString === "-") ? null : Utils.parseCoordinate(takeoverString);
 
-    const princessDataString = splitSpaces[4]
-    if (princessDataString !== "-") {
-      if (princessDataString.includes("x")) {
-        this.queenJustEaten = true
-      }
-      if (princessDataString.includes("w")) {
-        this.whitePrincessTransformRejected = true
-      }
-      if (princessDataString.includes("b")) {
-        this.blackPrincessTransformRejected = true
-      }
+    if (!/^[0-9]+$/.test(splitSpaces[4])) {
+      throw new Error(`Bad FEN: semiMove(${splitSpaces[4]}) should be a number`)
     }
 
     if (!/^[0-9]+$/.test(splitSpaces[5])) {
-      throw new Error(`Bad FEN: semiMove(${splitSpaces[5]}) should be a number`)
+      throw new Error(`Bad FEN: move(${splitSpaces[5]}) should be a number`)
     }
 
-    if (!/^[0-9]+$/.test(splitSpaces[6])) {
-      throw new Error(`Bad FEN: move(${splitSpaces[6]}) should be a number`)
-    }
-
-    this.semiMove = Number.parseInt(splitSpaces[5])
-    this.moveNumber = Number.parseInt(splitSpaces[6])
+    this.semiMove = Number.parseInt(splitSpaces[4])
+    this.moveNumber = Number.parseInt(splitSpaces[5])
   }
 
   getFen(): string {
@@ -206,18 +187,12 @@ export class Position {
       castlingString = "-"
     }
 
-    let princessString = ""
-    if (this.queenJustEaten) princessString += "x"
-    if (this.whitePrincessTransformRejected) princessString += "w"
-    if (this.blackPrincessTransformRejected) princessString += "b"
-    if (princessString.length === 0) princessString = "-"
-
     let takeoverString = "-"
     if (this.takeoverCoord) {
       takeoverString = Utils.coordinateToString(this.takeoverCoord)
     }
 
-    return `${positionStringArray.join("/")} ${moving} ${castlingString} ${takeoverString} ${princessString} ${this.semiMove} ${this.moveNumber}`
+    return `${positionStringArray.join("/")} ${moving} ${castlingString} ${takeoverString} ${this.semiMove} ${this.moveNumber}`
   }
 
   putFigure(coord: CoordinateInterface, figure: Figure, color: Color): Position {
@@ -253,7 +228,6 @@ export class Position {
   move(from: CoordinateInterface, to: CoordinateInterface, extra: ExtraMoveData = {}): Position {
 
     const newPosition = this.clone()
-    newPosition.queenJustEaten = false
     const fromCellInfo = newPosition.cellInfo(from)
     const toCellInfo = newPosition.cellInfo(to)
     let currentFigure = fromCellInfo.figure
@@ -290,26 +264,10 @@ export class Position {
       newPosition.semiMove = 0
     }
 
-    if (this.queenJustEaten) {
-      if (this.princessTransformJustRejected) {
-        if (fromCellInfo.color === Color.White) {
-          newPosition.whitePrincessTransformRejected = true
-        } else {
-          newPosition.blackPrincessTransformRejected = true
-        }
-      } else {
-        const princessPosition = newPosition.findFigures(Figure.Princess, fromCellInfo.color)[0]
-        const princessCellInfo = newPosition.cellInfo(princessPosition)
-        if (from.y === princessPosition.y && from.x === princessPosition.x) {
-          currentFigure = Figure.Queen
-        } else {
-          princessCellInfo.figure = Figure.Queen
-        }
-      }
-    }
-
     if (toCellInfo.figure === Figure.Queen && false === toCellInfo.empty && this.princessOnBoard(toCellInfo.color)) {
-      newPosition.queenJustEaten = true
+      const princessPosition = newPosition.findFigures(Figure.Princess, toCellInfo.color)[0]
+      const princessCellInfo = newPosition.cellInfo(princessPosition)
+      princessCellInfo.figure = Figure.Queen
     }
 
     if (toCellInfo.figure === Figure.King) {
@@ -576,7 +534,7 @@ export class Position {
    */
   getRepetitionKey(): string {
     const parts = this.getFen().split(" ")
-    return parts.slice(0, 5).join(" ")
+    return parts.slice(0, 4).join(" ")
   }
 
   availableMoves(coord: CoordinateInterface): CoordinateInterface[] {
@@ -608,12 +566,8 @@ export class Position {
         returnValue = getRookMoves(coord, cellInfo.color, this)
         break
       case Figure.Prince:
-        returnValue = getPrincessMoves(coord, cellInfo.color, this)
-        break
       case Figure.Princess:
-        returnValue = (this.queenJustEaten && false === this.princessTransformJustRejected)
-          ? getQueenMoves(coord, cellInfo.color, this)
-          : getPrincessMoves(coord, cellInfo.color, this);
+        returnValue = getPrincessMoves(coord, cellInfo.color, this)
         break
       case Figure.Knight:
         returnValue = getKnightMoves(coord, cellInfo.color, this)
@@ -654,24 +608,6 @@ export class Position {
 
   get takeover(): CoordinateInterface | null {
     return this.takeoverCoord
-  }
-
-  get isQueenJustEaten(): boolean {
-    return this.queenJustEaten
-  }
-
-  get isPrincessTransformRejceted(): boolean {
-    return this.princessTransformJustRejected
-  }
-
-  setPrincessTransformRejected(rejected: boolean): void {
-    if (!this.queenJustEaten) {
-      throw new Error("Queen not have been just eaten")
-    }
-    this.princessTransformJustRejected = rejected
-    this.baseAvailableMoves = null
-    this.attackedCoords = null
-    this.buildAvailableMoves()
   }
 
   getAttackedCoords(): CoordinateInterface[] {

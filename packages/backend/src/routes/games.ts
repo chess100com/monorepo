@@ -2,9 +2,12 @@ import { Router } from 'express';
 import type { Request, Response, NextFunction } from 'express';
 import { In } from 'typeorm';
 import { GameStatus } from '@chess100com/rules';
+import type { GameType } from '@chess100com/rules';
 import { AppDataSource } from '../data-source';
 import { Game } from '../entity/Game';
 import { User } from '../entity/User';
+import { UserRating } from '../entity/UserRating';
+import { ELO_DEFAULT } from '../elo-calc';
 
 type SessionWithUser = Express.Request['session'] & { userId?: number };
 
@@ -20,15 +23,33 @@ const requireAuth = (req: Request): number | null => {
   return userId ?? null;
 };
 
-const serializeGame = (game: Game, players: Map<number, User>) => {
+// `${userId}:${gameType}`
+type RatingKey = string;
+const ratingKey = (userId: number, type: GameType): RatingKey => `${userId}:${type}`;
+
+const ratingFor = (
+  ratings: Map<RatingKey, number>,
+  userId: number,
+  type: GameType,
+): number => ratings.get(ratingKey(userId, type)) ?? ELO_DEFAULT;
+
+const serializeGame = (
+  game: Game,
+  players: Map<number, User>,
+  ratings: Map<RatingKey, number>,
+) => {
   const white = players.get(game.whiteUserId);
   const black = players.get(game.blackUserId);
   const lastMove = game.moves.at(-1);
   return {
     id: game.id,
     type: game.type,
-    white: white ? { id: white.id, username: white.username, rating: white.rating } : null,
-    black: black ? { id: black.id, username: black.username, rating: black.rating } : null,
+    white: white
+      ? { id: white.id, username: white.username, rating: ratingFor(ratings, white.id, game.type) }
+      : null,
+    black: black
+      ? { id: black.id, username: black.username, rating: ratingFor(ratings, black.id, game.type) }
+      : null,
     startFen: game.startFen,
     currentFen: lastMove?.fen ?? game.startFen,
     moves: game.moves,
@@ -62,6 +83,35 @@ const parseOffset = (raw: unknown): number | undefined => {
   return n;
 };
 
+/**
+ * Fetches per-type ratings for every (userId, gameType) pair that appears in
+ * the given games. Returned as a flat map keyed by `ratingKey(userId, type)`.
+ */
+async function loadRatingsForGames(games: Game[]): Promise<Map<RatingKey, number>> {
+  const pairs = new Set<string>();
+  const userIds = new Set<number>();
+  const types = new Set<GameType>();
+  for (const g of games) {
+    pairs.add(ratingKey(g.whiteUserId, g.type));
+    pairs.add(ratingKey(g.blackUserId, g.type));
+    userIds.add(g.whiteUserId);
+    userIds.add(g.blackUserId);
+    types.add(g.type);
+  }
+  const map = new Map<RatingKey, number>();
+  if (userIds.size === 0) return map;
+  const rows = await AppDataSource.getRepository(UserRating)
+    .createQueryBuilder('ur')
+    .where('ur."userId" IN (:...ids)', { ids: [...userIds] })
+    .andWhere('ur."gameType" IN (:...types)', { types: [...types] })
+    .getMany();
+  for (const r of rows) {
+    const k = ratingKey(r.userId, r.gameType);
+    if (pairs.has(k)) map.set(k, r.rating);
+  }
+  return map;
+}
+
 router.get('/games/mine/ongoing', asyncHandler(async (req: Request, res: Response) => {
   const userId = requireAuth(req);
   if (!userId) {
@@ -86,6 +136,7 @@ router.get('/games/mine/ongoing', asyncHandler(async (req: Request, res: Respons
     ? await AppDataSource.getRepository(User).findBy({ id: In([...opponentIds]) })
     : [];
   const opponentMap = new Map(opponents.map(u => [u.id, u]));
+  const ratings = await loadRatingsForGames(games);
 
   const items = games.map(g => {
     const myColor: 'white' | 'black' = g.whiteUserId === userId ? 'white' : 'black';
@@ -96,7 +147,7 @@ router.get('/games/mine/ongoing', asyncHandler(async (req: Request, res: Respons
       type: g.type,
       myColor,
       opponent: opponent
-        ? { id: opponent.id, username: opponent.username, rating: opponent.rating }
+        ? { id: opponent.id, username: opponent.username, rating: ratingFor(ratings, opponent.id, g.type) }
         : null,
       createdAt: g.createdAt,
     };
@@ -132,8 +183,9 @@ router.get('/games/mine', asyncHandler(async (req: Request, res: Response) => {
     ? await AppDataSource.getRepository(User).findBy({ id: In([...userIds]) })
     : [];
   const playerMap = new Map(users.map(u => [u.id, u]));
+  const ratings = await loadRatingsForGames(games);
 
-  res.status(200).json({ games: games.map(g => serializeGame(g, playerMap)) });
+  res.status(200).json({ games: games.map(g => serializeGame(g, playerMap, ratings)) });
 }));
 
 router.get('/games/:id', asyncHandler(async (req: Request, res: Response) => {
@@ -159,8 +211,9 @@ router.get('/games/:id', asyncHandler(async (req: Request, res: Response) => {
     id: In([game.whiteUserId, game.blackUserId]),
   });
   const playerMap = new Map(users.map(u => [u.id, u]));
+  const ratings = await loadRatingsForGames([game]);
 
-  res.status(200).json(serializeGame(game, playerMap));
+  res.status(200).json(serializeGame(game, playerMap, ratings));
 }));
 
 export default router;
