@@ -9,10 +9,11 @@ import { GameSidePanel } from '../components/GameSidePanel';
 const noop = () => {};
 
 const LoadedGame = observer(() => {
+  const { game } = useStore();
   return (
     <div className="game-layout">
       <div className="game-main">
-        <Board />
+        <Board game={game} />
       </div>
       <GameSidePanel />
     </div>

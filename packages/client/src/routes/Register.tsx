@@ -31,7 +31,7 @@ export const Register = observer(() => {
             value={username}
             onChange={(e) => setUsername(e.target.value)}
             required
-            pattern="[a-zA-Z\-_]+"
+            pattern="[a-zA-Z0-9\-_]+"
             title={t('auth.namePattern')}
             autoComplete="username"
           />

@@ -23,3 +23,30 @@ export { I18nStore, SUPPORTED_LANGUAGES, DEFAULT_LANGUAGE, LANGUAGE_LABELS } fro
 export type { Language, LanguageApplier } from './stores/i18n';
 
 export { RootStore, rootStore } from './stores/root';
+
+export type {
+  AskBestMoveParams,
+  BestMove,
+  ParsedUciMove,
+  SkillStep,
+  UciEngine,
+  UciLineListener,
+  UciUnsubscribe,
+} from './engine/index.js';
+export {
+  askBestMove,
+  coordToFsSquare,
+  FS_FILE_LETTERS,
+  fsFileLetterToLocal,
+  fsSquareToCoord,
+  initUci,
+  isPromotionTransform,
+  loadChess100Variant,
+  localFileLetterToFs,
+  parseBestMoveLine,
+  parseUciMove,
+  setSkillLevel,
+  SKILL_STEP_TO_UCI,
+  waitForLine,
+  waitReady,
+} from './engine/index.js';

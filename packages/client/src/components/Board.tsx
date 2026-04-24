@@ -4,15 +4,22 @@ import { Chessground } from '@chess100com/chessground';
 import type { Api } from '@chess100com/chessground/api';
 import type { Config } from '@chess100com/chessground/config';
 import type { Key } from '@chess100com/chessground/types';
-import { useStore } from '../stores/context';
+import type { CoordinateInterface, ExtraMoveData } from '@chess100com/rules';
+import type { GameStateSnapshot, PlayerColor } from '@chess100com/client-core';
 import { coordToKey, computeDests, isPromotion, keyToCoord, AutoPawnPromotion } from '../services/chess';
 
-export const Board = observer(() => {
-  const { game } = useStore();
+export interface BoardGameLike {
+  state: GameStateSnapshot | null;
+  myColor: PlayerColor | null;
+  isMyTurn: boolean;
+  error: string | null;
+  move(from: CoordinateInterface, to: CoordinateInterface, extra?: ExtraMoveData): void;
+}
+
+export const Board = observer(({ game }: { game: BoardGameLike }) => {
   const elementRef = useRef<HTMLDivElement>(null);
   const apiRef = useRef<Api | null>(null);
 
-  // Mount / unmount chessground
   useEffect(() => {
     if (!elementRef.current) return;
     apiRef.current = Chessground(elementRef.current, {});
@@ -22,7 +29,6 @@ export const Board = observer(() => {
     };
   }, []);
 
-  // Sync config to current state
   useEffect(() => {
     const api = apiRef.current;
     const state = game.state;
@@ -62,7 +68,6 @@ export const Board = observer(() => {
     api.set(config);
   }, [game.state, game.myColor, game.isMyTurn, game]);
 
-  // On game:error, snap the board back to the authoritative FEN
   useEffect(() => {
     const api = apiRef.current;
     if (!api || !game.error || !game.state) return;

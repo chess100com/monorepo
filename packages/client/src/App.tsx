@@ -11,6 +11,7 @@ import { Register } from './routes/Register';
 import { ForgotPassword } from './routes/ForgotPassword';
 import { Lobby } from './routes/Lobby';
 import { Game } from './routes/Game';
+import { PlayBot } from './routes/PlayBot';
 import { Profile } from './routes/Profile';
 
 const noop = () => {};
@@ -32,14 +33,8 @@ export const App = observer(() => {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
-        <Route
-          path="/lobby"
-          element={
-            <ProtectedRoute>
-              <Lobby />
-            </ProtectedRoute>
-          }
-        />
+        <Route path="/lobby" element={<Lobby />} />
+        <Route path="/play-bot" element={<PlayBot />} />
         <Route
           path="/game/:id"
           element={

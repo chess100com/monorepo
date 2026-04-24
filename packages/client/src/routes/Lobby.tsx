@@ -57,7 +57,32 @@ function OngoingGames({ games }: { games: OngoingGameSummary[] }) {
   );
 }
 
-export const Lobby = observer(() => {
+const GuestLobby = observer(() => {
+  const { t } = useTranslation();
+  return (
+    <div className="page">
+      <h1>{t('lobby.guestTitle')}</h1>
+      <p>{t('lobby.guestLead')}</p>
+      <div className="lobby-guest-options">
+        <div className="lobby-guest-option">
+          <h2>{t('lobby.guestHumansTitle')}</h2>
+          <p>{t('lobby.guestHumansDesc')}</p>
+          <div className="actions">
+            <Link to="/register" className="button">{t('nav.register')}</Link>
+            <Link to="/login" className="button secondary">{t('nav.login')}</Link>
+          </div>
+        </div>
+        <div className="lobby-guest-option">
+          <h2>{t('lobby.guestBotTitle')}</h2>
+          <p>{t('lobby.guestBotDesc')}</p>
+          <Link to="/play-bot" className="button">{t('lobby.playBotCta')}</Link>
+        </div>
+      </div>
+    </div>
+  );
+});
+
+const AuthenticatedLobby = observer(() => {
   const { auth, lobby } = useStore();
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -133,9 +158,12 @@ export const Lobby = observer(() => {
             <button onClick={() => lobby.leaveQueue()}>{t('lobby.cancel')}</button>
           </>
         ) : (
-          <button onClick={() => lobby.joinQueue()} disabled={!lobby.canJoinQueue}>
-            {t('lobby.play')}
-          </button>
+          <>
+            <button onClick={() => lobby.joinQueue()} disabled={!lobby.canJoinQueue}>
+              {t('lobby.play')}
+            </button>
+            <Link to="/play-bot" className="button secondary">{t('lobby.playBotCta')}</Link>
+          </>
         )}
       </div>
 
@@ -153,4 +181,15 @@ export const Lobby = observer(() => {
       </button>
     </div>
   );
+});
+
+export const Lobby = observer(() => {
+  const { auth } = useStore();
+  const { t } = useTranslation();
+
+  if (auth.status === 'unknown') {
+    return <div className="loading">{t('common.loadingAuth')}</div>;
+  }
+  if (auth.status === 'anonymous') return <GuestLobby />;
+  return <AuthenticatedLobby />;
 });
