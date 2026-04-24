@@ -1,4 +1,6 @@
+// oxlint-disable unicorn/prefer-module
 import 'reflect-metadata';
+import * as path from 'node:path';
 import { DataSource } from 'typeorm';
 import { User } from './entity/User';
 import { Game } from './entity/Game';
@@ -14,5 +16,5 @@ export const AppDataSource = new DataSource({
   synchronize: false,
   logging: false,
   entities: [User, Game, UserRating],
-  migrations: ['src/migration/*.ts'],
+  migrations: [path.join(__dirname, 'migration', '*.{ts,js}')],
 });
