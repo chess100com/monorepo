@@ -1,7 +1,7 @@
 import { assert, describe, it } from "vitest"
-import { Utils } from "../../src/Utils.js"
-import type { Figure} from "../../src/Shared.js";
-import { Color } from "../../src/Shared.js"
+import { Utils } from "../../src/Utils"
+import type { Figure} from "../../src/Shared";
+import { Color } from "../../src/Shared"
 
 describe("Utils", () => {
 

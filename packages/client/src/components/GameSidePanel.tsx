@@ -3,8 +3,8 @@ import { Link } from 'react-router-dom';
 import { Trans, useTranslation } from 'react-i18next';
 import type { TFunction } from 'i18next';
 import type { PlayerColor } from '@chess100com/client-core';
-import { useStore } from '../stores/context.js';
-import { GameClock } from './GameClock.js';
+import { useStore } from '../stores/context';
+import { GameClock } from './GameClock';
 
 const STATUS_I18N_KEYS: Record<string, string> = {
   ongoing: 'game.status.ongoing',

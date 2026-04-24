@@ -1,9 +1,9 @@
 import { Router } from 'express';
 import type { Request, Response, NextFunction } from 'express';
 import { GameType } from '@chess100com/rules';
-import { AppDataSource } from '../data-source.js';
-import { User } from '../entity/User.js';
-import { UserRating } from '../entity/UserRating.js';
+import { AppDataSource } from '../data-source';
+import { User } from '../entity/User';
+import { UserRating } from '../entity/UserRating';
 
 const asyncHandler = (fn: (req: Request, res: Response, next: NextFunction) => Promise<void>) =>
   (req: Request, res: Response, next: NextFunction): void => {

@@ -1,8 +1,8 @@
 import { assert, describe, it } from "vitest"
-import { Game, GameStatus, BlackWinsResult, WhiteWinsResult, DrawResult, OngoingResult } from "../../src/Game.js"
-import { Position } from "../../src/Position.js"
-import { Utils } from "../../src/Utils.js"
-import { Color } from "../../src/Shared.js"
+import { Game, GameStatus, BlackWinsResult, WhiteWinsResult, DrawResult, OngoingResult } from "../../src/Game"
+import { Position } from "../../src/Position"
+import { Utils } from "../../src/Utils"
+import { Color } from "../../src/Shared"
 
 const c = Utils.parseCoordinate
 

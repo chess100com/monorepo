@@ -1,6 +1,6 @@
 import express from 'express';
 import { createServer } from 'node:http';
-import mailRouter from './mail.js';
+import mailRouter from './mail';
 
 export const app = express();
 app.use(express.json());
@@ -13,8 +13,8 @@ app.use(mailRouter);
 
 export const httpServer = createServer(app);
 
-export { resetMails, getMails } from './mail.js';
-export type { Mail } from './mail.js';
+export { resetMails, getMails } from './mail';
+export type { Mail } from './mail';
 
 const PORT = process.env.PORT ?? 4000;
 httpServer.listen(PORT);

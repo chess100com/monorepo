@@ -2,7 +2,7 @@ import { observer } from 'mobx-react-lite';
 import { useState, type FormEvent } from 'react';
 import { Link, Navigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { useStore } from '../stores/context.js';
+import { useStore } from '../stores/context';
 
 export const Register = observer(() => {
   const { auth } = useStore();

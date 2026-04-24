@@ -1,6 +1,6 @@
 import { io } from 'socket.io-client';
 import type { Socket } from 'socket.io-client';
-import { clientCoreConfig } from './config.js';
+import { clientCoreConfig } from './config';
 
 let socket: Socket | null = null;
 

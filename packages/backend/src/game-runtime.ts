@@ -8,9 +8,9 @@ import type {
   ExtraMoveData,
   MoveMetadata,
 } from '@chess100com/rules';
-import type { Game as GameEntity } from './entity/Game.js';
-import type { ClockSnapshot } from './clock.js';
-import { redisClient } from './redis-client.js';
+import type { Game as GameEntity } from './entity/Game';
+import type { ClockSnapshot } from './clock';
+import { redisClient } from './redis-client';
 
 export type PlayerColor = 'white' | 'black';
 

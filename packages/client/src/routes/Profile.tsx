@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { GameStatus, WhiteWinsResult, BlackWinsResult, DrawResult, type GameType } from '@chess100com/rules';
 import { apiFetch } from '@chess100com/client-core';
-import { useStore } from '../stores/context.js';
+import { useStore } from '../stores/context';
 
 interface GameSummary {
   id: string;

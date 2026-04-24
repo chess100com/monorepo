@@ -1,7 +1,7 @@
 import { makeAutoObservable, runInAction } from 'mobx';
 import type { GameType } from '@chess100com/rules';
-import { apiFetch, HttpError } from '../api.js';
-import { disconnectSocket } from '../socket.js';
+import { apiFetch, HttpError } from '../api';
+import { disconnectSocket } from '../socket';
 
 export interface CurrentUser {
   username: string;

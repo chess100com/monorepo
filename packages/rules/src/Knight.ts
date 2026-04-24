@@ -1,6 +1,6 @@
-import type { Position } from "./Position.js"
-import type { CoordinateInterface, Color } from "./Shared.js"
-import { Utils } from "./Utils.js"
+import type { Position } from "./Position"
+import type { CoordinateInterface, Color } from "./Shared"
+import { Utils } from "./Utils"
 
 const directions: number[][] = [[2, 1], [1, 2], [-1, 2], [-2, 1], [-1, -2], [-2, -1], [1, -2], [2, -1]];
 

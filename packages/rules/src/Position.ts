@@ -1,15 +1,15 @@
 // oxlint-disable max-lines
 // oxlint-disable complexity
-import type { BoardInterface, CellInfo, CoordinateInterface, ExtraMoveData, MoveInterface } from "./Shared.js";
-import { Color, Figure, FigureNames, ColorsNames, AvailablePawnTransforms } from "./Shared.js"
-import { Utils } from "./Utils.js"
-import { getPawnMoves } from "./Pawn.js"
-import { getQueenMoves } from "./Queen.js"
-import { getRookMoves } from "./Rook.js"
-import { getPrincessMoves } from "./Princess.js"
-import { getBishopMoves } from "./Bishop.js"
-import { getKnightMoves } from "./Knight.js"
-import { getKingMoves } from "./King.js";
+import type { BoardInterface, CellInfo, CoordinateInterface, ExtraMoveData, MoveInterface } from "./Shared";
+import { Color, Figure, FigureNames, ColorsNames, AvailablePawnTransforms } from "./Shared"
+import { Utils } from "./Utils"
+import { getPawnMoves } from "./Pawn"
+import { getQueenMoves } from "./Queen"
+import { getRookMoves } from "./Rook"
+import { getPrincessMoves } from "./Princess"
+import { getBishopMoves } from "./Bishop"
+import { getKnightMoves } from "./Knight"
+import { getKingMoves } from "./King";
 
 const getEmptyBoard = (): BoardInterface => {
   return {

@@ -1,5 +1,5 @@
-import { redisClient } from './redis-client.js';
-import type { PlayerColor } from './game-runtime.js';
+import { redisClient } from './redis-client';
+import type { PlayerColor } from './game-runtime';
 
 interface ClockDoc {
   whiteMs: number;

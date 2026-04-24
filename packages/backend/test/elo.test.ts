@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { calcElo, ELO_K } from '../src/elo-calc.js';
+import { calcElo, ELO_K } from '../src/elo-calc';
 
 describe('calcElo', () => {
   it('splits K exactly in half on a draw between equal-rated players', () => {

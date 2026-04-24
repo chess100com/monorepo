@@ -1,5 +1,5 @@
-import type { CoordinateInterface, Figure } from "./Shared.js";
-import { ColumnNames, FigureNames, Color } from "./Shared.js"
+import type { CoordinateInterface, Figure } from "./Shared";
+import { ColumnNames, FigureNames, Color } from "./Shared"
 
 export const Utils = {
 

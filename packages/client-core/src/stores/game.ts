@@ -1,8 +1,8 @@
 import { makeAutoObservable, runInAction } from 'mobx';
 import type { Socket } from 'socket.io-client';
 import type { CoordinateInterface, ExtraMoveData } from '@chess100com/rules';
-import { getSocket } from '../socket.js';
-import { apiFetch } from '../api.js';
+import { getSocket } from '../socket';
+import { apiFetch } from '../api';
 
 export type PlayerColor = 'white' | 'black';
 

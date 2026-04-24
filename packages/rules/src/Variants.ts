@@ -1,6 +1,6 @@
-import type { GameMetaData } from "./Game.js"
-import { Game } from "./Game.js"
-import { StartFen } from "./Shared.js"
+import type { GameMetaData } from "./Game"
+import { Game } from "./Game"
+import { StartFen } from "./Shared"
 
 /**
  * Variants of 10x10 chess supported by this engine. Add new entries here as

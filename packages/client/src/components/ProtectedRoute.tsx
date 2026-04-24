@@ -2,7 +2,7 @@ import { observer } from 'mobx-react-lite';
 import { Navigate, useLocation } from 'react-router-dom';
 import type { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useStore } from '../stores/context.js';
+import { useStore } from '../stores/context';
 
 export const ProtectedRoute = observer(({ children }: { children: ReactNode }) => {
   const { auth } = useStore();

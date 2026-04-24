@@ -1,7 +1,7 @@
-import { AuthStore } from './auth.js';
-import { LobbyStore } from './lobby.js';
-import { GameStore } from './game.js';
-import { I18nStore } from './i18n.js';
+import { AuthStore } from './auth';
+import { LobbyStore } from './lobby';
+import { GameStore } from './game';
+import { I18nStore } from './i18n';
 
 export class RootStore {
   auth = new AuthStore();
