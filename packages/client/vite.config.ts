@@ -8,9 +8,12 @@ const BACKEND = process.env.VITE_BACKEND_URL ?? 'http://localhost:3001';
 
 // Required for SharedArrayBuffer (multi-threaded WASM in the in-browser chess
 // engine). Mirrored in packages/client/nginx.conf for production.
+// `credentialless` (vs `require-corp`) keeps cross-origin isolation but lets
+// third-party scripts that don't set CORP (e.g. Yandex Metrika) load — they
+// just travel without credentials.
 const CROSS_ORIGIN_ISOLATION_HEADERS = {
   'Cross-Origin-Opener-Policy': 'same-origin',
-  'Cross-Origin-Embedder-Policy': 'require-corp',
+  'Cross-Origin-Embedder-Policy': 'credentialless',
 };
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
