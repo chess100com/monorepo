@@ -80,6 +80,7 @@
     "capitalized-comments": "allow"
   },
   "ignorePatterns": [
-    "**/scripts/*.js"
+    "**/scripts/*.js",
+    "packages/chessground/"
   ]
 }
