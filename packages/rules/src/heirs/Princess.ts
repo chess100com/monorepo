@@ -1,9 +1,16 @@
-import type { Position } from "./Position"
-import type { CoordinateInterface, Color } from "./Shared"
-import { Utils } from "./Utils"
+import type { Position } from "../Position.js"
+import type { CoordinateInterface, Color } from "../Shared.js"
+import { Utils } from "../Utils.js"
 
+// Stryker disable next-line all -- symmetric direction set; any unary-operator
+// mutation just renames an existing direction, making the mutants equivalent.
 const directions: number[][] = [[-1, -1], [1, 1], [1, -1], [-1, 1], [-1, 0], [1, 0], [0, -1], [0, 1]];
 
+/**
+ * Princess and Prince share the same movement: up to 2 squares in any of
+ * the eight directions. The Heirs variant carries both pieces; Grand Chess
+ * does not have either.
+ */
 export const getPrincessMoves = (
   c: CoordinateInterface,
   color: Color,

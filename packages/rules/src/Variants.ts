@@ -1,26 +1,17 @@
-import type { GameMetaData } from "./Game"
-import { Game } from "./Game"
-import { StartFen } from "./Shared"
+import type { GameMetaData } from "./Game.js"
+import { Game } from "./Game.js"
+import { GameType, HeirsStartFen, GrandChessStartFen } from "./Shared.js"
 
 /**
- * Variants of 10x10 chess supported by this engine. Add new entries here as
- * new variants are implemented; keep the enum's string values stable because
- * they are persisted on the Game row and emitted over the wire.
- */
-export enum GameType {
-  Heirs = "heirs",
-}
-
-/**
- * Creates a fresh game instance for a variant. All variants share the Game
- * class today — they only differ by starting position — but the factory
- * indirection is here so variants with variant-specific rules can return a
- * subclass (or inject rule modifiers) without touching callers.
+ * Creates a fresh game instance for a variant. The factory carries the
+ * variant identity through to Position so its rules (pawn behaviour,
+ * castling availability, special promotions) match the chosen game type.
  */
 export type GameFactory = (metadata?: GameMetaData) => Game
 
 export const GameFactories: Record<GameType, GameFactory> = {
-  [GameType.Heirs]: (metadata?: GameMetaData) => Game.fromFen(StartFen, metadata),
+  [GameType.Heirs]: (metadata?: GameMetaData) => Game.fromFen(HeirsStartFen, metadata, GameType.Heirs),
+  [GameType.GrandChess]: (metadata?: GameMetaData) => Game.fromFen(GrandChessStartFen, metadata, GameType.GrandChess),
 }
 
 /**
@@ -29,5 +20,6 @@ export const GameFactories: Record<GameType, GameFactory> = {
  * keep this lookup so game creation can pick the right FEN from the variant.
  */
 export const VariantStartFen: Record<GameType, string> = {
-  [GameType.Heirs]: StartFen,
+  [GameType.Heirs]: HeirsStartFen,
+  [GameType.GrandChess]: GrandChessStartFen,
 }

@@ -6,6 +6,7 @@ import * as cg from './types.js';
 
 export interface Config {
   fen?: cg.FEN; // chess position in Forsyth notation
+  variant?: cg.Variant; // chess variant — controls FEN piece-letter parsing
   orientation?: cg.Color; // board orientation. white | black
   turnColor?: cg.Color; // turn to play. white | black
   check?: cg.Color | boolean; // true for current color, false to unset
@@ -110,7 +111,7 @@ export function configure(state: HeadlessState, config: Config): void {
 
   // if a fen was provided, replace the pieces
   if (config.fen) {
-    state.pieces = fenRead(config.fen);
+    state.pieces = fenRead(config.fen, state.variant);
     state.drawable.shapes = config.drawable?.shapes || [];
   }
 

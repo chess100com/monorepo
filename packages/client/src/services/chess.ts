@@ -1,4 +1,4 @@
-import { Position, Figure } from '@chess100com/rules';
+import { Position, Figure, GameType } from '@chess100com/rules';
 import type { CoordinateInterface } from '@chess100com/rules';
 import type { Key } from '@chess100com/chessground/types';
 
@@ -14,8 +14,8 @@ export function keyToCoord(k: string): CoordinateInterface {
   return { x: FILES.indexOf(file) + 1, y: rank };
 }
 
-export function computeDests(fen: string): Map<Key, Key[]> {
-  const position = Position.fromFen(fen);
+export function computeDests(fen: string, variant: GameType = GameType.Heirs): Map<Key, Key[]> {
+  const position = Position.fromFen(fen, variant);
   const dests = new Map<Key, Key[]>();
   for (const m of position.getAvailableMoves()) {
     const from = coordToKey(m.from);
@@ -31,11 +31,18 @@ export function computeDests(fen: string): Map<Key, Key[]> {
 }
 
 /**
- * Returns true when the given move is a pawn pushing to the promotion rank
- * (y=10 for white pawn, y=1 for black pawn). MVP: always auto-promote to Queen.
+ * Returns true when the given move is a pawn pushing to the mandatory
+ * promotion rank (y=10 for white pawn, y=1 for black pawn). Optional
+ * Grand-Chess promotion on ranks 8 and 9 is not exposed here yet — pawns
+ * stay pawns unless they hit the last rank, where we auto-promote to Queen.
  */
-export function isPromotion(fen: string, from: CoordinateInterface, to: CoordinateInterface): boolean {
-  const position = Position.fromFen(fen);
+export function isPromotion(
+  fen: string,
+  from: CoordinateInterface,
+  to: CoordinateInterface,
+  variant: GameType = GameType.Heirs,
+): boolean {
+  const position = Position.fromFen(fen, variant);
   const cell = position.cellInfo(from);
   if (cell.empty || cell.figure !== Figure.Pawn) return false;
   return to.y === 10 || to.y === 1;

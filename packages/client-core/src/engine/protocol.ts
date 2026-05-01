@@ -40,10 +40,14 @@ export async function waitReady(engine: UciEngine): Promise<void> {
   await waitForLine(engine, (l) => l === 'readyok');
 }
 
-export async function loadChess100Variant(engine: UciEngine, ini: string): Promise<void> {
+export async function loadChess100Variant(
+  engine: UciEngine,
+  ini: string,
+  variantName = 'chess100',
+): Promise<void> {
   engine.writeFile('/chess100.ini', ini);
   engine.send('setoption name VariantPath value /chess100.ini');
-  engine.send('setoption name UCI_Variant value chess100');
+  engine.send(`setoption name UCI_Variant value ${variantName}`);
   await waitReady(engine);
 }
 

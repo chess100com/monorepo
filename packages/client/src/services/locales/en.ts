@@ -88,6 +88,7 @@ export const en = {
   },
   variants: {
     heirs: 'Heirs',
+    grandchess: 'Grand Chess',
   },
   rules: {
     title: 'Rules',

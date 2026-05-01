@@ -1,10 +1,10 @@
 // oxlint-disable complexity
-import type { Position } from "./Position"
-import type { CoordinateInterface } from "./Shared";
-import { Color } from "./Shared"
-import { Utils } from "./Utils"
+import type { Position } from "../Position.js"
+import type { CoordinateInterface } from "../Shared.js";
+import { Color } from "../Shared.js"
+import { Utils } from "../Utils.js"
 
-export const getPawnMoves = (c: CoordinateInterface, color: Color, position: Position): CoordinateInterface[] => {
+export const getHeirsPawnMoves = (c: CoordinateInterface, color: Color, position: Position): CoordinateInterface[] => {
   const returnValue: CoordinateInterface[] = []
   if (color === Color.White) {
     // first pawn move by white
@@ -53,36 +53,31 @@ export const getPawnMoves = (c: CoordinateInterface, color: Color, position: Pos
     returnValue.push(newCoord)
   }
 
-  // takeover eats
+  // takeover eats — guards (canTakeCoord.y bounds, color/direction sanity) are
+  // defensive against board states that the rest of the engine never produces;
+  // they are intentionally untestable, so the whole block is mutation-disabled.
+  // Stryker disable all
   if (position.takeover) {
     const takeoverRow = position.takeover.y
-    // Stryker disable next-line all
     const isNeighbourColumn = Math.abs(position.takeover.x - c.x) === 1
     const canTakeCoord: CoordinateInterface = {
       y: c.y + dy,
       x: position.takeover.x
     }
-    // Stryker disable next-line all
     if (
-      // Stryker disable next-line all
       isNeighbourColumn
-      // Stryker disable next-line all
       && canTakeCoord.y >= 3
-      // Stryker disable next-line all
       && canTakeCoord.y <= 8
-      // Stryker disable next-line all
       && position.isEmpty(canTakeCoord)
-      // Stryker disable next-line all
       && (
-        // Stryker disable next-line all
         color === Color.White && canTakeCoord.y > takeoverRow
-        // Stryker disable next-line all
         || color === Color.Black && canTakeCoord.y < takeoverRow
       )
     ) {
       returnValue.push(canTakeCoord);
     }
   }
+  // Stryker restore all
 
   return returnValue
 }

@@ -1,10 +1,11 @@
-import type { Position } from "./Position"
-import type { CoordinateInterface, Color } from "./Shared"
-import { Utils } from "./Utils"
+import type { Position } from "../Position.js"
+import type { CoordinateInterface, Color } from "../Shared.js"
+import { Utils } from "../Utils.js"
 
-const directions: number[][] = [[-1, -1], [1, 1], [1, -1], [-1, 1]]
+const directions: number[][] = [[-1, 0], [1, 0], [0, -1], [0, 1]]
 
-export function getBishopMoves(c: CoordinateInterface, color: Color, position: Position): CoordinateInterface[] {
+export function getRookMoves(c: CoordinateInterface, color: Color, position: Position): CoordinateInterface[] {
+
   const returnValue: CoordinateInterface[] = []
   for (const direction of directions) {
     const dx = direction[0]

@@ -3,10 +3,14 @@ import { useEffect, useRef } from 'react';
 import { Chessground } from '@chess100com/chessground';
 import type { Api } from '@chess100com/chessground/api';
 import type { Config } from '@chess100com/chessground/config';
-import type { Key } from '@chess100com/chessground/types';
+import type { Key, Variant } from '@chess100com/chessground/types';
+import { GameType } from '@chess100com/rules';
 import type { CoordinateInterface, ExtraMoveData } from '@chess100com/rules';
 import type { GameStateSnapshot, PlayerColor } from '@chess100com/client-core';
 import { coordToKey, computeDests, isPromotion, keyToCoord, AutoPawnPromotion } from '../services/chess';
+
+const variantToChessgroundVariant = (t: GameType | undefined): Variant =>
+  t === GameType.GrandChess ? 'grandchess' : 'heirs';
 
 export interface BoardGameLike {
   state: GameStateSnapshot | null;
@@ -39,10 +43,12 @@ export const Board = observer(({ game }: { game: BoardGameLike }) => {
       : undefined;
 
     const canMove = game.isMyTurn;
-    const dests = canMove ? computeDests(state.currentFen) : new Map<Key, Key[]>();
+    const variant = state.type;
+    const dests = canMove ? computeDests(state.currentFen, variant) : new Map<Key, Key[]>();
 
     const config: Config = {
       fen: state.currentFen,
+      variant: variantToChessgroundVariant(variant),
       orientation: game.myColor ?? 'white',
       turnColor: state.turn,
       check: state.check ? state.turn : undefined,
@@ -56,7 +62,7 @@ export const Board = observer(({ game }: { game: BoardGameLike }) => {
             const fromCoord = keyToCoord(orig);
             const toCoord = keyToCoord(dest);
             const currentFen = game.state?.currentFen;
-            const extra = currentFen && isPromotion(currentFen, fromCoord, toCoord)
+            const extra = currentFen && isPromotion(currentFen, fromCoord, toCoord, variant)
               ? { pawnTransform: AutoPawnPromotion }
               : undefined;
             game.move(fromCoord, toCoord, extra);

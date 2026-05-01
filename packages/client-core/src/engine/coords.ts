@@ -1,5 +1,10 @@
-import { AvailablePawnTransforms, ColumnNames, Figure } from '@chess100com/rules';
+import { AvailablePawnTransforms, ColumnNames, Figure, GrandChessPawnTransforms } from '@chess100com/rules';
 import type { CoordinateInterface } from '@chess100com/rules';
+
+const ALL_PAWN_TRANSFORMS: ReadonlySet<Figure> = new Set<Figure>([
+  ...AvailablePawnTransforms,
+  ...GrandChessPawnTransforms,
+]);
 
 const FS_FILE_LETTERS = 'abcdefghij';
 
@@ -34,6 +39,8 @@ const PROMO_LETTER_TO_FIGURE: Record<string, Figure> = {
   r: Figure.Rook,
   b: Figure.Bishop,
   n: Figure.Knight,
+  m: Figure.Marshal,
+  c: Figure.Cardinal,
 };
 
 export interface ParsedUciMove {
@@ -69,7 +76,7 @@ export function parseUciMove(uci: string): ParsedUciMove {
 }
 
 export function isPromotionTransform(figure: Figure | undefined): figure is Figure {
-  return figure !== undefined && AvailablePawnTransforms.includes(figure);
+  return figure !== undefined && ALL_PAWN_TRANSFORMS.has(figure);
 }
 
 // Named export strictly so tests/docs can depend on the 10-letter FS alphabet.

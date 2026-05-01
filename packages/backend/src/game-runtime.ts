@@ -7,6 +7,7 @@ import type {
   CoordinateInterface,
   ExtraMoveData,
   MoveMetadata,
+  GameType,
 } from '@chess100com/rules';
 import type { Game as GameEntity } from './entity/Game';
 import type { ClockSnapshot } from './clock';
@@ -16,6 +17,7 @@ export type PlayerColor = 'white' | 'black';
 
 export interface GameStateSnapshot {
   gameId: string;
+  type: GameType;
   startFen: string;
   currentFen: string;
   moves: MoveMetadata[];
@@ -95,7 +97,7 @@ export const parseGameIdPayload = (raw: unknown): string | null => {
  * for threefold-repetition detection, so we always replay from scratch.
  */
 export const rebuildRulesGame = (row: GameEntity): RulesGame => {
-  const game = RulesGame.fromFen(row.startFen);
+  const game = RulesGame.fromFen(row.startFen, undefined, row.type);
   for (const m of row.moves) {
     game.move(m.from, m.to, m.extra);
   }
@@ -109,6 +111,7 @@ export const buildGameState = (
   clock: ClockSnapshot | null,
 ): GameStateSnapshot => ({
   gameId: row.id,
+  type: row.type,
   startFen: row.startFen,
   currentFen: rulesGame.getFen(),
   moves: rulesGame.moves,

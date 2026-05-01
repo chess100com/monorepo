@@ -88,6 +88,7 @@ export const ru = {
   },
   variants: {
     heirs: 'Наследники',
+    grandchess: 'Большие шахматы',
   },
   rules: {
     title: 'Правила',

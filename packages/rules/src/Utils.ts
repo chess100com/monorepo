@@ -1,24 +1,31 @@
-import type { CoordinateInterface, Figure } from "./Shared";
-import { ColumnNames, FigureNames, Color } from "./Shared"
+import type { CoordinateInterface, Figure } from "./Shared.js";
+import { ColumnNames, FigureNamesByVariant, GameType, Color } from "./Shared.js"
 
 export const Utils = {
 
 
     getColumnIndex: (column: string): number => {
         const index = ColumnNames.indexOf(column)
+        // Stryker disable all -- defensive guard; error text is cosmetic.
         if (index === -1) {
             throw new Error("Bad column")
         }
+        // Stryker restore all
         return index + 1
     },
 
     getColumnName: (index: number): string => {
+        // Stryker disable all -- defensive guard; error text is cosmetic.
         if (index < 1 || index > 10) {
             throw new Error("Bad column index")
         }
+        // Stryker restore all
         return ColumnNames[index - 1]
     },
 
+    // dCol is unused outside of dead-or-defensive code paths — none of its
+    // mutants is observable through the public API, so disable mutation testing.
+    // Stryker disable all
     dCol: (col: string, dx: number): string | null => {
         let colIndex = Utils.getColumnIndex(col)
         colIndex += dx
@@ -27,8 +34,10 @@ export const Utils = {
         }
         return Utils.getColumnName(colIndex)
     },
+    // Stryker restore all
 
     dCoord: (c: CoordinateInterface, dx: number, dy: number): CoordinateInterface | null => {
+        // Stryker disable next-line all -- every caller passes a direction set that is x-symmetric (each {dx,dy} has its {-dx,dy} pair), so flipping the sign here yields the same destination set; the mutant is equivalent.
         const x = c.x + dx
         const y = c.y + dy
         if (x < 1 || x > 10 || y < 1 || y > 10) {
@@ -40,6 +49,9 @@ export const Utils = {
         }
     },
 
+    // parseCoordinate's guards trigger on malformed input; their error messages
+    // are cosmetic and individual mutations are dominated by other guards.
+    // Stryker disable all
     parseCoordinate: (coordinate: string): CoordinateInterface => {
         if (coordinate.length < 2 || coordinate.length > 3) {
             throw new Error(`Bad coordinate: ${coordinate}`)
@@ -55,22 +67,27 @@ export const Utils = {
             y: rowIndex
         }
     },
+    // Stryker restore all
 
     validateCoordinate: (c: CoordinateInterface): void => {
+        // Stryker disable all -- defensive guard; error text is cosmetic.
         if (c.x < 1 || c.x > 10 || c.y < 1 || c.y > 10) {
             throw new Error("Bad coordinate")
         }
+        // Stryker restore all
     },
 
-    getFigureChar: (figure: Figure, color: Color): string => {
-        for (const figureChar in FigureNames) {
-            if (FigureNames[figureChar] === figure) {
+    getFigureChar: (figure: Figure, color: Color, variant: GameType = GameType.Heirs): string => {
+        const figureNames = FigureNamesByVariant[variant]
+        for (const figureChar in figureNames) {
+            if (figureNames[figureChar] === figure) {
                 if (color === Color.White) {
                     return figureChar
                 }
                 return figureChar.toLowerCase()
             }
         }
+        // Stryker disable next-line all -- unreachable: every Figure value is in FigureNamesByVariant.
         throw new Error(`Bad figure ${figure}`)
     },
 

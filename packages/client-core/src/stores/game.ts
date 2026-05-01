@@ -1,6 +1,6 @@
 import { makeAutoObservable, runInAction } from 'mobx';
 import type { Socket } from 'socket.io-client';
-import type { CoordinateInterface, ExtraMoveData } from '@chess100com/rules';
+import type { CoordinateInterface, ExtraMoveData, GameType } from '@chess100com/rules';
 import { getSocket } from '../socket';
 import { apiFetch } from '../api';
 
@@ -26,6 +26,7 @@ export interface ClockSnapshot {
 
 export interface GameStateSnapshot {
   gameId: string;
+  type: GameType;
   startFen: string;
   currentFen: string;
   moves: MoveRecord[];

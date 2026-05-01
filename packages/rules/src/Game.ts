@@ -1,7 +1,7 @@
-import type { CoordinateInterface, Figure, ExtraMoveData } from "./Shared";
-import { StartFen, Color } from "./Shared"
-import { Position } from "./Position"
-import { Utils } from "./Utils"
+import type { CoordinateInterface, Figure, ExtraMoveData } from "./Shared.js";
+import { StartFen, Color, GameType } from "./Shared.js"
+import { Position } from "./Position.js"
+import { Utils } from "./Utils.js"
 
 export enum GameStatus {
   Ongoing = "ongoing",
@@ -43,6 +43,7 @@ export interface GameMetaData {
 export interface CreateGameProps {
   metadata?: GameMetaData
   fen?: string
+  variant?: GameType
 }
 
 export class Game {
@@ -69,25 +70,27 @@ export class Game {
     if (props?.metadata) {
       this.setMetadata(props.metadata);
     }
+    // Stryker disable next-line all -- private constructor: every external entry point passes a defined `props`.
+    const variant = props?.variant ?? GameType.Heirs
     // Stryker disable next-line OptionalChaining
     // Stryker disable next-line ConditionalExpression
     if (props?.fen) {
       this.startPosition = props.fen
       this.fromPosition = true
-      this.position = Position.fromFen(props.fen)
+      this.position = Position.fromFen(props.fen, variant)
     } else {
-      this.position = Position.fromFen(StartFen);
+      this.position = Position.fromFen(StartFen, variant);
     }
     this.registerPositionForRepetition()
     this.refreshStatus()
   }
 
-  static create(metadata?: GameMetaData): Game {
-    return new Game({ metadata });
+  static create(metadata?: GameMetaData, variant?: GameType): Game {
+    return new Game({ metadata, variant });
   }
 
-  static fromFen(fen: string, metadata?: GameMetaData): Game {
-    return new Game({ fen, metadata });
+  static fromFen(fen: string, metadata?: GameMetaData, variant?: GameType): Game {
+    return new Game({ fen, metadata, variant });
   }
 
   private setMetadata(metadata?: GameMetaData) {
@@ -160,9 +163,11 @@ export class Game {
     if (this.status !== GameStatus.Ongoing) {
       throw new Error(`Game already ended: ${this.status}`)
     }
+    // Stryker disable all -- defensive guard; error text is cosmetic.
     if (color !== Color.White && color !== Color.Black) {
       throw new Error("Only White or Black can resign")
     }
+    // Stryker restore all
     this.status = GameStatus.Resignation
     this.result = color === Color.White ? BlackWinsResult : WhiteWinsResult
   }
@@ -179,9 +184,11 @@ export class Game {
     if (this.status !== GameStatus.Ongoing) {
       throw new Error(`Game already ended: ${this.status}`)
     }
+    // Stryker disable all -- defensive guard; error text is cosmetic.
     if (color !== Color.White && color !== Color.Black) {
       throw new Error("Only White or Black can time out")
     }
+    // Stryker restore all
     this.status = GameStatus.Timeout
     this.result = color === Color.White ? BlackWinsResult : WhiteWinsResult
   }

@@ -88,6 +88,7 @@ export const pt = {
   },
   variants: {
     heirs: 'Herdeiros',
+    grandchess: 'Xadrez Grande',
   },
   rules: {
     title: 'Regras',

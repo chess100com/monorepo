@@ -2,10 +2,18 @@ import { observer } from 'mobx-react-lite';
 import { useEffect, useState } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import type { TFunction } from 'i18next';
+import { GameType } from '@chess100com/rules';
 import type { GameStateSnapshot, PlayerColor, SkillStep } from '@chess100com/client-core';
 import { Board } from '../components/Board';
 import { BotGameStore } from '../stores/bot-game';
 import { trackGoal } from '../services/analytics';
+
+const VARIANT_OPTIONS: GameType[] = Object.values(GameType);
+
+const VARIANT_I18N: Record<GameType, string> = {
+  [GameType.Heirs]: 'variants.heirs',
+  [GameType.GrandChess]: 'variants.grandchess',
+};
 
 const STATUS_I18N_KEYS: Record<string, string> = {
   ongoing: 'game.status.ongoing',
@@ -34,6 +42,25 @@ function startButtonLabel(t: TFunction, store: BotGameStore): string {
 const PlayBotIntro = observer(() => {
   const { t } = useTranslation();
   return <p>{t('playBot.intro')}</p>;
+});
+
+const VariantPicker = observer(({ store, disabled }: { store: BotGameStore; disabled: boolean }) => {
+  const { t } = useTranslation();
+  if (VARIANT_OPTIONS.length <= 1) return null;
+  return (
+    <label className="variant-select">
+      <span>{t('lobby.variantLabel')}</span>
+      <select
+        value={store.variant}
+        onChange={(e) => store.setVariant(e.target.value as GameType)}
+        disabled={disabled}
+      >
+        {VARIANT_OPTIONS.map(type => (
+          <option key={type} value={type}>{t(VARIANT_I18N[type])}</option>
+        ))}
+      </select>
+    </label>
+  );
 });
 
 const SkillPicker = observer(({ store, disabled }: { store: BotGameStore; disabled: boolean }) => {
@@ -112,6 +139,8 @@ const BotSidePanel = observer(({ store }: { store: BotGameStore }) => {
     <aside className="game-side">
       <div className="game-side-body">
         <h2>{t('playBot.title')}</h2>
+
+        <VariantPicker store={store} disabled={store.engineLoading || store.engineThinking} />
 
         <SkillPicker store={store} disabled={store.engineLoading || store.engineThinking} />
 

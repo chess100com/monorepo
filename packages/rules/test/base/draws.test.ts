@@ -120,6 +120,27 @@ describe("Insufficient material", () => {
     assert.isFalse(isInsufficient("8nk/10/10/10/10/10/10/10/10/N3K5 w - - 0 1"))
   })
 
+  it("K+N vs K+B is NOT insufficient", () => {
+    assert.isFalse(isInsufficient("8nk/10/10/10/10/10/10/10/10/B3K5 w - - 0 1"))
+  })
+
+  it("K+N+N vs K is NOT insufficient (length count > 1)", () => {
+    assert.isFalse(isInsufficient("9k/10/10/10/10/10/10/10/10/N1N1K5 w - - 0 1"))
+  })
+
+  it("K vs K+N+N is NOT insufficient (length count > 1)", () => {
+    assert.isFalse(isInsufficient("n1n1k5/10/10/10/10/10/10/10/10/9K w - - 0 1"))
+  })
+
+  it("K+B+B vs K+B is NOT insufficient (extra minor on white)", () => {
+    // White has two bishops on a1 and c1; black has one bishop on i9.
+    assert.isFalse(isInsufficient("10/8bk/10/10/10/10/10/10/10/B1B1K5 w - - 0 1"))
+  })
+
+  it("K+B vs K+N is NOT insufficient (mixed minors)", () => {
+    assert.isFalse(isInsufficient("8bk/10/10/10/10/10/10/10/10/N3K5 w - - 0 1"))
+  })
+
   it("a pawn is never insufficient", () => {
     assert.isFalse(isInsufficient("9k/10/10/10/10/10/10/10/P9/K9 w - - 0 1"))
   })

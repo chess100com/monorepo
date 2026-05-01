@@ -1,5 +1,5 @@
 import { makeAutoObservable, runInAction } from 'mobx';
-import { Color, Game, GameStatus, StartFen } from '@chess100com/rules';
+import { Color, Game, GameStatus, GameType, VariantStartFen } from '@chess100com/rules';
 import type { CoordinateInterface, ExtraMoveData } from '@chess100com/rules';
 import type {
   GameStateSnapshot,
@@ -13,16 +13,23 @@ import { askBestMove, isPromotionTransform, setSkillLevel } from '@chess100com/c
 
 const DEFAULT_MOVETIME_MS = 1000;
 
+const ENGINE_VARIANT_NAME: Record<GameType, string> = {
+  [GameType.Heirs]: 'chess100',
+  [GameType.GrandChess]: 'chess100grand',
+};
+
 export class BotGameStore {
   state: GameStateSnapshot | null = null;
   myColor: PlayerColor | null = null;
   error: string | null = null;
   skillLevel: SkillStep = 'medium';
+  variant: GameType = GameType.Heirs;
   engineThinking = false;
   engineLoading = false;
 
   private game: Game | null = null;
   private engine: UciEngine | null = null;
+  private engineVariant: GameType | null = null;
 
   constructor() {
     makeAutoObservable(this, {}, { autoBind: true });
@@ -38,22 +45,35 @@ export class BotGameStore {
     if (this.engine) setSkillLevel(this.engine, level);
   }
 
-  async startNew(): Promise<void> {
+  setVariant(variant: GameType): void {
+    if (this.variant === variant) return;
+    this.variant = variant;
+  }
+
+  async startNew(variant: GameType = this.variant): Promise<void> {
     runInAction(() => {
       this.engineLoading = true;
       this.error = null;
+      this.variant = variant;
     });
     try {
+      if (this.engine && this.engineVariant !== variant) {
+        try { this.engine.quit(); } finally {
+          this.engine = null;
+          this.engineVariant = null;
+        }
+      }
       if (!this.engine) {
         const [{ createWasmEngine }, iniModule] = await Promise.all([
           import('../services/engine/wasmEngine.js'),
           import('../assets/chess100.ini?raw'),
         ]);
-        this.engine = await createWasmEngine(iniModule.default);
+        this.engine = await createWasmEngine(iniModule.default, ENGINE_VARIANT_NAME[variant]);
+        this.engineVariant = variant;
       }
       setSkillLevel(this.engine, this.skillLevel);
       const myColor: PlayerColor = Math.random() < 0.5 ? 'white' : 'black';
-      const fresh = Game.create();
+      const fresh = Game.fromFen(VariantStartFen[variant], undefined, variant);
       runInAction(() => {
         this.game = fresh;
         this.myColor = myColor;
@@ -103,6 +123,7 @@ export class BotGameStore {
       this.engine?.quit();
     } finally {
       this.engine = null;
+      this.engineVariant = null;
     }
   }
 
@@ -166,7 +187,8 @@ export class BotGameStore {
     const check = g.status === GameStatus.Ongoing && g.position.isKingUnderAttack(g.position.getMovingColor());
     return {
       gameId: 'bot',
-      startFen: g.startPosition ?? StartFen,
+      type: this.variant,
+      startFen: g.startPosition ?? VariantStartFen[this.variant],
       currentFen: g.position.getFen(),
       moves,
       status: g.status,

@@ -199,4 +199,79 @@ describe("Castling", () => {
     }
   });
 
+  // The lost-castling-rights logic in Position.move (after a Rook move) has
+  // four branches keyed on (color × from.x). The next four cases pin each one.
+  const fenAfter = (move: string, _moverColor: Color): string => {
+    const startFen = "r4k3r/10/10/10/10/10/10/10/10/R4K3R w KQkq - 0 1";
+    const game = Game.fromFen(startFen);
+    if (move.startsWith("R") || move.startsWith("a") || move.startsWith("k")) {
+      // proceed with white move
+    }
+    const [from, to] = parseMove(move);
+    game.move(from, to);
+    return game.getFen();
+  };
+
+  it("white rook moving from a1 clears the queenside flag (Q drops)", () => {
+    const fen = fenAfter("a1-a3", Color.White);
+    const castling = fen.split(" ")[2];
+    assert.notInclude(castling, "Q");
+    assert.include(castling, "K");
+    assert.include(castling, "k");
+    assert.include(castling, "q");
+  });
+
+  it("white rook moving from k1 clears the kingside flag (K drops)", () => {
+    const fen = fenAfter("k1-k3", Color.White);
+    const castling = fen.split(" ")[2];
+    assert.notInclude(castling, "K");
+    assert.include(castling, "Q");
+    assert.include(castling, "k");
+    assert.include(castling, "q");
+  });
+
+  it("black rook moving from a10 clears the black queenside flag (q drops)", () => {
+    const startFen = "r4k3r/10/10/10/10/10/10/10/10/R4K3R b KQkq - 0 1";
+    const game = Game.fromFen(startFen);
+    game.move(c("a10"), c("a8"));
+    const castling = game.getFen().split(" ")[2];
+    assert.notInclude(castling, "q");
+    assert.include(castling, "K");
+    assert.include(castling, "Q");
+    assert.include(castling, "k");
+  });
+
+  it("black rook moving from k10 clears the black kingside flag (k drops)", () => {
+    const startFen = "r4k3r/10/10/10/10/10/10/10/10/R4K3R b KQkq - 0 1";
+    const game = Game.fromFen(startFen);
+    game.move(c("k10"), c("k8"));
+    const castling = game.getFen().split(" ")[2];
+    assert.notInclude(castling, "k");
+    assert.include(castling, "K");
+    assert.include(castling, "Q");
+    assert.include(castling, "q");
+  });
+
+  it("white king moving clears only white castling flags (black flags untouched)", () => {
+    const startFen = "r4k3r/10/10/10/10/10/10/10/10/R4K3R w KQkq - 0 1";
+    const game = Game.fromFen(startFen);
+    game.move(c("f1"), c("f2"));
+    const castling = game.getFen().split(" ")[2];
+    assert.notInclude(castling, "K");
+    assert.notInclude(castling, "Q");
+    assert.include(castling, "k");
+    assert.include(castling, "q");
+  });
+
+  it("black king moving clears only black castling flags (white flags untouched)", () => {
+    const startFen = "r4k3r/10/10/10/10/10/10/10/10/R4K3R b KQkq - 0 1";
+    const game = Game.fromFen(startFen);
+    game.move(c("f10"), c("f9"));
+    const castling = game.getFen().split(" ")[2];
+    assert.notInclude(castling, "k");
+    assert.notInclude(castling, "q");
+    assert.include(castling, "K");
+    assert.include(castling, "Q");
+  });
+
 })

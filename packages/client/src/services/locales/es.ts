@@ -88,6 +88,7 @@ export const es = {
   },
   variants: {
     heirs: 'Herederos',
+    grandchess: 'Ajedrez Grande',
   },
   rules: {
     title: 'Reglas',

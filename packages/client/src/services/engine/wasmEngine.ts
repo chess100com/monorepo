@@ -63,11 +63,11 @@ function waitForWorkerReady(worker: Worker): Promise<void> {
 
 // Boots a Fairy-Stockfish Web Worker, loads the chess100 variant, and returns
 // a ready-to-use UciEngine. The caller owns the engine; call `quit()` to tear down.
-export async function createWasmEngine(ini: string): Promise<UciEngine> {
+export async function createWasmEngine(ini: string, variantName = 'chess100'): Promise<UciEngine> {
   const worker = spawnWorker();
   await waitForWorkerReady(worker);
   const engine = createEngineFromWorker(worker);
   await initUci(engine);
-  await loadChess100Variant(engine, ini);
+  await loadChess100Variant(engine, ini, variantName);
   return engine;
 }

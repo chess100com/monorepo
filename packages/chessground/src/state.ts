@@ -7,6 +7,7 @@ import * as cg from './types.js';
 
 export interface HeadlessState {
   pieces: cg.Pieces;
+  variant: cg.Variant; // chess variant — controls FEN piece-letter parsing
   orientation: cg.Color; // board orientation. white | black
   turnColor: cg.Color; // turn to play. white | black
   check?: cg.Key; // square currently in check "a2"
@@ -111,6 +112,7 @@ export interface State extends HeadlessState {
 export function defaults(): HeadlessState {
   return {
     pieces: fen.read(fen.initial),
+    variant: 'heirs',
     orientation: 'white',
     turnColor: 'white',
     coordinates: true,
