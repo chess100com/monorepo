@@ -5,6 +5,7 @@ import type { TFunction } from 'i18next';
 import type { GameStateSnapshot, PlayerColor, SkillStep } from '@chess100com/client-core';
 import { Board } from '../components/Board';
 import { BotGameStore } from '../stores/bot-game';
+import { trackGoal } from '../services/analytics';
 
 const STATUS_I18N_KEYS: Record<string, string> = {
   ongoing: 'game.status.ongoing',
@@ -115,7 +116,10 @@ const BotSidePanel = observer(({ store }: { store: BotGameStore }) => {
         <SkillPicker store={store} disabled={store.engineLoading || store.engineThinking} />
 
         <button
-          onClick={() => { store.startNew().catch(() => {}); }}
+          onClick={() => {
+            trackGoal('play_bot_start');
+            store.startNew().catch(() => {});
+          }}
           disabled={store.engineLoading}
         >
           {startButtonLabel(t, store)}

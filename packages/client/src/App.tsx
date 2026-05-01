@@ -1,6 +1,6 @@
 import { observer } from 'mobx-react-lite';
 import { useEffect } from 'react';
-import { Navigate, Route, Routes } from 'react-router-dom';
+import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import { useStore } from './stores/context';
 import { Layout } from './components/Layout';
 import { ProtectedRoute } from './components/ProtectedRoute';
@@ -13,8 +13,17 @@ import { Lobby } from './routes/Lobby';
 import { Game } from './routes/Game';
 import { PlayBot } from './routes/PlayBot';
 import { Profile } from './routes/Profile';
+import { trackPageview } from './services/analytics';
 
 const noop = () => {};
+
+const RouteTracker = () => {
+  const { pathname, search } = useLocation();
+  useEffect(() => {
+    trackPageview(globalThis.location.origin + pathname + search);
+  }, [pathname, search]);
+  return null;
+};
 
 export const App = observer(() => {
   const { auth } = useStore();
@@ -27,6 +36,7 @@ export const App = observer(() => {
 
   return (
     <Layout>
+      <RouteTracker />
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/rules" element={<Rules />} />
