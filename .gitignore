@@ -3,3 +3,4 @@ node_modules
 *.stryker-tmp
 .neteragen
 packages/client/dist
+packages/client/tsconfig.tsbuildinfo
