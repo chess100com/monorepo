@@ -15,6 +15,11 @@ const variantToChessgroundVariant = (t: GameType | undefined): Variant => {
   return 'heirs';
 };
 
+// In Generals pieces change behaviour on the Royal vertical (file e, x=5) — tint it.
+const royalFileHighlight = new Map<Key, string>(
+  Array.from({ length: 10 }, (_, i): [Key, string] => [coordToKey({ x: 5, y: i + 1 }), 'royal-file']),
+);
+
 export interface BoardGameLike {
   state: GameStateSnapshot | null;
   myColor: PlayerColor | null;
@@ -56,6 +61,9 @@ export const Board = observer(({ game }: { game: BoardGameLike }) => {
       turnColor: state.turn,
       check: state.check ? state.turn : undefined,
       lastMove,
+      highlight: {
+        custom: variant === GameType.Generals ? royalFileHighlight : undefined,
+      },
       movable: {
         free: false,
         color: canMove ? state.turn : undefined,
