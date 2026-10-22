@@ -10,13 +10,23 @@ export const en = {
   },
   home: {
     title: '100-square Chess',
-    lead: 'Classical chess on a <1>10×10</1> board with two new pieces — the <3>Prince</3> and the <5>Princess</5>.',
+    lead: 'Chess on a <1>10×10</1> board in three variants — each with its own new pieces and special rules.',
     intro:
-      'The roomier board opens up new tactical ideas: more room to maneuver, longer diagonals, deeper attacks. The rules stay familiar — checkmate, stalemate, threefold repetition, the fifty-move rule and insufficient material. Special rules are added for the heir to the throne and for the Princess promoting to a Queen.',
+      'The roomier board opens up new tactical ideas: more room to maneuver, longer diagonals, deeper attacks. The core rules stay familiar in every variant — checkmate, stalemate, threefold repetition, the fifty-move rule and insufficient material.',
+    variantsTitle: 'Variants',
+    variantRulesLink: 'Rules →',
+    variants: {
+      heirs:
+        'The original variant with two new pieces — the Prince and the Princess. The Princess can become a Queen, and while the Prince is alive, losing the King does not end the game: the heir takes the throne.',
+      grandchess:
+        "Christian Freeling's classic from 1984: the Marshal (Rook + Knight) and the Cardinal (Bishop + Knight), Rooks in the corners, pawns on the third rank and promotion starting from the eighth rank.",
+      generals:
+        'The General and the Jester, plus the Royal vertical "e": pieces standing on it grow stronger. Also: pawn castling and a reward for the King\'s march to the enemy throne.',
+    },
     features: {
       board: '10×10 board with 10 pawns and 10 pieces per side.',
-      pieces: 'Two new pieces — Prince and Princess.',
       online: 'Online matches via matchmaking and Elo rating.',
+      bot: 'Play against the computer — no registration required.',
     },
     ctaPlay: 'Play',
     ctaRules: 'Rules',
@@ -93,6 +103,16 @@ export const en = {
   },
   rules: {
     title: 'Rules',
+    endgameTitle: 'Endings',
+    endgame: {
+      checkmate: 'Checkmate',
+      stalemate: 'Stalemate',
+      threefold: 'Threefold repetition',
+      fiftyMove: 'Fifty-move rule',
+      insufficient: 'Insufficient material',
+      resign: 'Resignation',
+      agreement: 'Draw by agreement',
+    },
     heirs: {
       boardTitle: 'Board and setup',
       board1:
@@ -114,16 +134,67 @@ export const en = {
       castlingTitle: 'Castling',
       castlingDesc:
         'Both sides of castling are supported: short (towards the Princess) and long (towards the Prince). Standard restrictions apply: squares between the King and Rook are empty, squares the King crosses are not under attack, and the pieces have not moved before.',
-      endgameTitle: 'Endings',
-      endgame: {
-        checkmate: 'Checkmate',
-        stalemate: 'Stalemate',
-        threefold: 'Threefold repetition',
-        fiftyMove: 'Fifty-move rule',
-        insufficient: 'Insufficient material',
-        resign: 'Resignation',
-        agreement: 'Draw by agreement',
-      },
+    },
+    grandchess: {
+      boardTitle: 'Board and setup',
+      board1:
+        'A variant invented by Christian Freeling in 1984. It is played on the same 10×10 board: files <1>a b c d e f g h i k</1>, ranks 1 to 10. Each side has 10 pawns and 10 pieces.',
+      board2:
+        'The Rooks stand in the corners (a1 and k1). The other pieces stand on the second rank from b to i: Knight, Bishop, Queen, <1>Marshal</1>, King, <3>Cardinal</3>, Bishop, Knight; a2 and k2 stay empty. Pawns fill the whole third rank. Black mirrors this on ranks 10, 9 and 8.',
+      piecesTitle: 'New pieces',
+      marshalTitle: 'Marshal (M)',
+      marshalDesc:
+        'Combines the Rook and the Knight: moves any number of squares along a rank or file, or jumps like a Knight.',
+      cardinalTitle: 'Cardinal (C)',
+      cardinalDesc:
+        'Combines the Bishop and the Knight: moves any number of squares diagonally, or jumps like a Knight.',
+      pawnsTitle: 'Pawns',
+      pawnsDesc:
+        'From its starting rank (3rd for White, 8th for Black) a pawn may advance one or two squares, afterwards one square at a time. It captures diagonally forward. There is no en passant. The fifty-move counter resets on both pawn moves and captures.',
+      promotionTitle: 'Promotion',
+      promotionDesc:
+        'On reaching the 8th or 9th rank (3rd or 2nd for Black) a pawn <1>may</1> promote or stay a pawn. On the last rank promotion is <3>mandatory</3>. A pawn can become a Queen, Marshal, Cardinal, Rook, Bishop or Knight. In the current client, promotion happens only on the last rank and automatically to a Queen.',
+      castlingTitle: 'Castling',
+      castlingDesc: 'There is no castling in Grand Chess.',
+    },
+    generals: {
+      boardTitle: 'Board and setup',
+      board1:
+        'The game is played on a 10×10 board: files <1>a b c d e f g h i k</1>, ranks 1 to 10. Each side has 10 pawns and 10 pieces.',
+      board2:
+        "Starting back rank: Rook, Knight, Bishop, <1>Jester</1>, King, Queen, <3>General</3>, Bishop, Knight, Rook. The King stands on e and the Queen on f, so compared with classical chess the flanks are swapped: the King's flank is on the left, the Queen's flank on the right. Pawns stand on the 2nd rank (9th for Black).",
+      royalTitle: 'The Royal vertical',
+      royalDesc:
+        'The <1>e</1> file is the Royal vertical — it is highlighted on the board. The King, the General, the Jester and the pawns standing on it become <3>strong</3> and gain extra powers. A piece that leaves the file turns ordinary again and regains its strength when it comes back — any number of times.',
+      piecesTitle: 'New pieces',
+      generalTitle: 'General (G)',
+      generalDesc:
+        'Moves and captures one or two squares along a rank or file; it cannot jump over a piece on an adjacent square. It also has "circumventing" moves: one square diagonally, provided both neighbouring squares along the rank and the file are empty (e.g. e5–f6 if e6 and f5 are free). From the centre of the board it controls 12 squares.',
+      generalStrong:
+        '<1>Strong General</1> (on the e file): its straight moves reach across the whole rank and file, like a Rook. Circumventing moves stay the same.',
+      jesterTitle: 'Jester (C)',
+      jesterDesc:
+        'Moves and captures one or two squares diagonally; it cannot jump over a piece. It also has "circumventing" moves: two squares straight along a rank or file, provided both diagonal squares in that direction are empty (e.g. e5–e7 if d6 and f6 are free). The Jester never changes the colour of its squares; from the centre of the board it controls 12 squares.',
+      jesterStrong:
+        '<1>Strong Jester</1> (on the e file): its diagonal moves reach across the whole board, like a Bishop. Circumventing moves stay the same.',
+      kingTitle: 'King',
+      kingStrong:
+        '<1>Strong King</1> (on the e file) moves and captures one or two squares in any direction. It cannot jump: for a two-square move the square in between must be empty.',
+      kingThrone:
+        "<1>The throne.</1> Once per game, when the King reaches the opposing King's starting square (e10 for White, e1 for Black), its side gets an extra pawn, placed on any empty square of its own pawn rank (2nd for White, 9th for Black).",
+      pawnsTitle: 'Pawns',
+      pawnsDesc:
+        "From the starting rank a pawn may advance one, two or three squares, then one square at a time; it captures diagonally forward. En passant is extended: right after a pawn's long move, the opponent may capture it not only with a pawn but with any piece that lands on a square the pawn passed over. The fifty-move counter resets on pawn moves and captures.",
+      royalPawn:
+        '<1>Royal pawn.</1> A pawn on the e file may also step one square backward along the file and capture one square diagonally backward. Once it leaves the file, it becomes an ordinary pawn again.',
+      promotionDesc:
+        'A pawn promotes on the last rank to a Queen, Rook, Bishop or Knight. In the current client, promotion happens automatically to a Queen.',
+      pawnCastlingTitle: 'Pawn castling',
+      pawnCastlingDesc:
+        "A pawn may swap places with its own Bishop, Jester, Queen or King standing one square diagonally ahead: the pawn takes the piece's square and the piece takes the pawn's square, all in one move. A Royal pawn may also do this diagonally backward. The General, Rook and Knight cannot take part — they do not move diagonally. Pawn castling may be repeated any number of times.",
+      castlingTitle: 'Royal castling',
+      castlingDesc:
+        'Since the King starts on e, castling looks different. Short (towards the a file): the King goes to b1 and the Rook from a1 to c1. Long (towards the k file): the King goes to h1 and the Rook from k1 to g1 (for Black — b10/c10 and h10/g10). Standard restrictions apply: the squares between King and Rook are empty, the squares the King crosses are not attacked, and neither piece has moved before.',
     },
   },
   game: {

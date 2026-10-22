@@ -123,6 +123,40 @@ body {
   line-height: 1.5;
 }
 
+.home-variants {
+  display: grid;
+  gap: 10px;
+  margin: 12px 0 8px;
+}
+
+.home-variant {
+  display: flex;
+  flex-direction: column;
+  padding: 14px 16px;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  background: #fff;
+}
+
+.home-variant h3 {
+  margin: 0 0 6px;
+  font-size: 16px;
+}
+
+.home-variant p {
+  flex: 1;
+  margin: 0 0 10px;
+  font-size: 14px;
+  line-height: 1.45;
+  color: #374151;
+}
+
+.home-variant a {
+  color: #2b6cb0;
+  font-weight: 600;
+  text-decoration: none;
+}
+
 .home-features {
   padding-left: 20px;
   margin: 16px 0 24px;
