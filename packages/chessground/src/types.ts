@@ -110,9 +110,11 @@ export const roles = [
   'prince',
   'marshal',
   'cardinal',
+  'general',
+  'jester',
 ] as const;
 
-export const variants = ['heirs', 'grandchess'] as const;
+export const variants = ['heirs', 'grandchess', 'generals'] as const;
 export type Variant = (typeof variants)[number];
 export const files = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'k'] as const;
 export const ranks = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'] as const;

@@ -9,10 +9,12 @@
 export enum GameType {
     Heirs = "heirs",
     GrandChess = "grandchess",
+    Generals = "generals",
 }
 
 export const HeirsStartFen = "rnbcqksbnr/pppppppppp/10/10/10/10/10/10/PPPPPPPPPP/RNBCQKSBNR w KQkq - 0 1"
 export const GrandChessStartFen = "r8r/1nbqmkcbn1/pppppppppp/10/10/10/10/PPPPPPPPPP/1NBQMKCBN1/R8R w - - 0 1"
+export const GeneralsStartFen = "rnbckqgbnr/pppppppppp/10/10/10/10/10/10/PPPPPPPPPP/RNBCKQGBNR w KQkq - 0 1"
 
 /**
  * Backwards-compatible alias kept for callers that import the original
@@ -31,6 +33,8 @@ export enum Figure {
     Princess = 8,
     Marshal = 9,
     Cardinal = 10,
+    General = 11,
+    Jester = 12,
     None = 0
 }
 
@@ -46,10 +50,10 @@ export const ColorsNames: { [key: string]: Color } = {
 }
 
 /**
- * FEN letters per variant. The Heirs variant uses C for Prince and S for
- * Princess; Grand Chess reuses C for Cardinal and adds M for Marshal. The
- * letter "C" is therefore variant-overloaded — Position knows which variant
- * it is parsing and consults the matching map.
+ * FEN letters per variant. The letter `C` is variant-overloaded: it stands
+ * for Prince in Heirs, Cardinal in Grand Chess, and Jester (clown) in
+ * Generals. Each variant carries its own map and Position consults the one
+ * matching its own variant when parsing a FEN.
  */
 export const FigureNamesByVariant: Record<GameType, { [key: string]: Figure }> = {
     [GameType.Heirs]: {
@@ -68,6 +72,16 @@ export const FigureNamesByVariant: Record<GameType, { [key: string]: Figure }> =
         B: Figure.Bishop,
         M: Figure.Marshal,
         C: Figure.Cardinal,
+        Q: Figure.Queen,
+        K: Figure.King,
+        P: Figure.Pawn,
+    },
+    [GameType.Generals]: {
+        R: Figure.Rook,
+        N: Figure.Knight,
+        B: Figure.Bishop,
+        C: Figure.Jester,
+        G: Figure.General,
         Q: Figure.Queen,
         K: Figure.King,
         P: Figure.Pawn,
@@ -124,6 +138,13 @@ export interface ExtraMoveData {
     pawnTransform?: Figure
     princessTransform?: boolean,
     test?: boolean
+    /**
+     * Generals only: when the king lands on the opposite "throne" square
+     * (e10 for white, e1 for black) for the first time, a fresh pawn must be
+     * placed on a chosen square of the player's pawn rank (rank 2 for white,
+     * rank 9 for black). The placement coord is provided here.
+     */
+    thronePawnPlacement?: CoordinateInterface
 }
 
 export const AvailablePawnTransforms: Figure[] = [Figure.Queen, Figure.Bishop, Figure.Knight, Figure.Rook]

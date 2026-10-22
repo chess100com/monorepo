@@ -13,6 +13,7 @@ const VARIANT_OPTIONS: GameType[] = Object.values(GameType);
 const VARIANT_I18N: Record<GameType, string> = {
   [GameType.Heirs]: 'variants.heirs',
   [GameType.GrandChess]: 'variants.grandchess',
+  [GameType.Generals]: 'variants.generals',
 };
 
 const STATUS_I18N_KEYS: Record<string, string> = {

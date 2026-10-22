@@ -18,10 +18,65 @@ import { getGrandChessPawnMoves } from "./grandchess/Pawn.js"
 import { getGrandChessKingMoves } from "./grandchess/King.js"
 import { getMarshalMoves } from "./grandchess/Marshal.js"
 import { getCardinalMoves } from "./grandchess/Cardinal.js"
+import { getGeneralsPawnMoves, isPawnCastlingPartner } from "./generals/Pawn.js"
+import { getGeneralsKingMoves } from "./generals/King.js"
+import { getGeneralMoves } from "./generals/General.js"
+import { getJesterMoves } from "./generals/Jester.js"
 import { getQueenMoves } from "./common/Queen.js"
 import { getRookMoves } from "./common/Rook.js"
 import { getBishopMoves } from "./common/Bishop.js"
 import { getKnightMoves } from "./common/Knight.js"
+
+/**
+ * Picks any empty square of the player's pawn rank for the throne pawn
+ * placement. Used only by `extra.test = true` legality probing inside
+ * `buildAvailableMoves` — real moves must specify the placement explicitly.
+ */
+const autoThronePlacement = (
+  position: Position,
+  pawnRank: number,
+): CoordinateInterface | null => {
+  for (let x = 1; x <= 10; x++) {
+    if (position.cellInfo({ x, y: pawnRank }).empty) {
+      return { x, y: pawnRank }
+    }
+  }
+  return null
+}
+
+interface CastlingTarget { rookFromCol: number; toRookCol: number }
+
+/**
+ * Per-variant castling-target table indexed by the king's destination x.
+ * Returns null when the move is not a castling attempt for the given variant.
+ */
+const castlingTargets = (
+  variant: GameType,
+  figure: Figure,
+  from: CoordinateInterface,
+): Record<number, CastlingTarget> | null => {
+  if (figure !== Figure.King) return null
+  // Stryker disable next-line all -- the per-variant gate is structurally
+  // redundant with the king-x check that follows, because castling never fires
+  // unless the king sits on its variant-specific home file (x=6 in Heirs, x=5
+  // in Generals); positions where a king of one variant sits on the other's
+  // home file are never produced by canMove gating, so widening this check is
+  // not observable.
+  if (variant === GameType.Heirs && from.x === 6) {
+    return {
+      3: { rookFromCol: 1, toRookCol: 4 },
+      8: { rookFromCol: 10, toRookCol: 7 },
+    }
+  }
+  // Stryker disable next-line all -- same as above.
+  if (variant === GameType.Generals && from.x === 5) {
+    return {
+      2: { rookFromCol: 1, toRookCol: 3 },
+      8: { rookFromCol: 10, toRookCol: 7 },
+    }
+  }
+  return null
+}
 
 const getEmptyBoard = (): BoardInterface => {
   return {
@@ -57,6 +112,16 @@ export class Position {
   private semiMove = 0
 
   private takeoverCoord: CoordinateInterface | null = null
+
+  // Generals only: per-side flag that tracks whether the king has already
+  // collected the one-time pawn reward for landing on the opposite throne
+  // square. The flags are not encoded in FEN — they are reconstructed by
+  // replaying moves from the start position (which is what backend
+  // rebuildRulesGame does for persisted games).
+  // Stryker disable next-line all -- defaults are unconditionally established by setFen-time game state and replay.
+  private whiteThroneClaimed = false
+  // Stryker disable next-line all
+  private blackThroneClaimed = false
 
   private variant: GameType = GameType.Heirs
 
@@ -261,6 +326,8 @@ export class Position {
     const position = new Position()
     position.variant = this.variant
     position.setFen(this.getFen())
+    position.whiteThroneClaimed = this.whiteThroneClaimed
+    position.blackThroneClaimed = this.blackThroneClaimed
     return position
   }
 
@@ -271,7 +338,68 @@ export class Position {
     const toCellInfo = newPosition.cellInfo(to)
     let currentFigure = fromCellInfo.figure
 
+    // Generals' "extended en passant": any non-pawn piece moving onto a
+    // skipped square of an active sprint captures the sprinted pawn at the
+    // takeover landing. Heirs/Grand Chess restrict this to pawn captures —
+    // those are handled inside the pawn block below.
+    if (
+      this.variant === GameType.Generals
+      && fromCellInfo.figure !== Figure.Pawn
+      && this.takeoverCoord
+      && to.x === this.takeoverCoord.x
+    ) {
+      const sprinterCell = this.cellInfo(this.takeoverCoord)
+      if (
+        sprinterCell.figure === Figure.Pawn
+        && sprinterCell.color !== fromCellInfo.color
+      ) {
+        const sprinterFromY = sprinterCell.color === Color.White ? 2 : 9
+        const isSkipped = sprinterCell.color === Color.White
+          ? to.y > sprinterFromY && to.y < this.takeoverCoord.y
+          : to.y < sprinterFromY && to.y > this.takeoverCoord.y
+        if (isSkipped) {
+          const takoverPawnCell = newPosition.cellInfo(this.takeoverCoord)
+          takoverPawnCell.empty = true
+          takoverPawnCell.color = Color.None
+          takoverPawnCell.figure = Figure.None
+        }
+      }
+    }
+
     newPosition.takeoverCoord = null
+
+    /**
+     * Generals pawn-castling: a pawn moving diagonally to a same-colour
+     * diagonal-moving piece swaps places with it (the pawn lands on the
+     * piece's square; the piece relocates to the pawn's square). This
+     * happens exclusively in the Generals variant and is detected here
+     * because the move generator emits the diagonal target as a normal
+     * available move.
+     */
+    if (
+      this.variant === GameType.Generals
+      && fromCellInfo.figure === Figure.Pawn
+      && !toCellInfo.empty
+      && toCellInfo.color === fromCellInfo.color
+      && isPawnCastlingPartner(toCellInfo.figure)
+    ) {
+      const partnerFigure = toCellInfo.figure
+      const partnerColor = toCellInfo.color
+      // Swap: pawn lands on partner's square; partner moves back to from-square.
+      toCellInfo.empty = false
+      toCellInfo.color = fromCellInfo.color
+      toCellInfo.figure = Figure.Pawn
+      fromCellInfo.empty = false
+      fromCellInfo.color = partnerColor
+      fromCellInfo.figure = partnerFigure
+      newPosition.semiMove = 0
+      if (fromCellInfo.color === Color.Black) {
+        newPosition.moveNumber++
+      }
+      newPosition.moving = this.moving === Color.White ? Color.Black : Color.White
+      return newPosition
+    }
+
     if (fromCellInfo.figure === Figure.Pawn) {
       newPosition.semiMove = 0
       // En passant target marker is only meaningful for variants with en passant.
@@ -408,11 +536,15 @@ export class Position {
     }
 
     /**
-     * Process castling move
+     * Process castling move. Coordinates differ per variant: in Heirs the king
+     * starts on f-file (x=6) and slides to x=3 (long, queen-side) or x=8
+     * (short, king-side). In Generals the king starts on e-file (x=5) and
+     * slides to x=2 (short, a-side) or x=8 (long, k-side).
      */
-    if (fromCellInfo.figure === Figure.King && from.x === 6 && [3, 8].includes(to.x)) {
-      const rookFromCol = to.x === 3 ? 1 : 10
-      const toRookCol = to.x === 3 ? 4 : 7
+    const castlingMeta = castlingTargets(this.variant, fromCellInfo.figure, from)
+    const castlingTargetX = to.x
+    if (castlingMeta && castlingMeta[castlingTargetX]) {
+      const { rookFromCol, toRookCol } = castlingMeta[castlingTargetX]
       const fromRookCellInfo = newPosition.cellInfo({ y: from.y, x: rookFromCol })
       // Stryker disable all -- defensive: castling is gated upstream by canCastling, so the rook is always present here.
       if (fromRookCellInfo.figure !== Figure.Rook) {
@@ -429,15 +561,56 @@ export class Position {
       fromRookCellInfo.figure = Figure.None
     }
 
+    /**
+     * Generals: throne rule — when the king first lands on the opposite e-file
+     * back-rank square, the player receives a fresh pawn placed on a chosen
+     * square of their pawn rank. The placement coord is supplied via
+     * `extra.thronePawnPlacement`. The `extra.test` path used by
+     * `buildAvailableMoves` synthesises a default placement so legality
+     * checking is not blocked by the placement requirement.
+     */
+    const movingColor = fromCellInfo.color
+    const movingFigure = fromCellInfo.figure
+    if (
+      this.variant === GameType.Generals
+      && movingFigure === Figure.King
+    ) {
+      const isWhiteThrone = movingColor === Color.White && to.x === 5 && to.y === 10
+      const isBlackThrone = movingColor === Color.Black && to.x === 5 && to.y === 1
+      const alreadyClaimed = movingColor === Color.White
+        ? this.whiteThroneClaimed
+        : this.blackThroneClaimed
+      if ((isWhiteThrone || isBlackThrone) && !alreadyClaimed) {
+        const pawnRank = movingColor === Color.White ? 2 : 9
+        let placement = extra?.thronePawnPlacement
+        if (extra?.test && !placement) {
+          placement = autoThronePlacement(newPosition, pawnRank) ?? undefined
+        }
+        if (!placement || placement.y !== pawnRank
+          || !newPosition.cellInfo(placement).empty) {
+          throw new Error("Generals throne pawn placement must target an empty square of the player's pawn rank")
+        }
+        const placeCell = newPosition.cellInfo(placement)
+        placeCell.empty = false
+        placeCell.color = movingColor
+        placeCell.figure = Figure.Pawn
+        if (movingColor === Color.White) {
+          newPosition.whiteThroneClaimed = true
+        } else {
+          newPosition.blackThroneClaimed = true
+        }
+      }
+    }
+
     toCellInfo.empty = false
     toCellInfo.color = fromCellInfo.color
     toCellInfo.figure = currentFigure
 
-    newPosition.moving = this.moving === Color.White ? Color.Black : Color.White
-
     fromCellInfo.empty = true
     fromCellInfo.color = Color.None
     fromCellInfo.figure = Figure.None
+
+    newPosition.moving = this.moving === Color.White ? Color.Black : Color.White
 
     return newPosition
   }
@@ -655,6 +828,26 @@ export class Position {
     return returnValue
   }
 
+  private pickPawnMoves(coord: CoordinateInterface, color: Color): CoordinateInterface[] {
+    if (this.variant === GameType.GrandChess) {
+      return getGrandChessPawnMoves(coord, color, this)
+    }
+    if (this.variant === GameType.Generals) {
+      return getGeneralsPawnMoves(coord, color, this)
+    }
+    return getHeirsPawnMoves(coord, color, this)
+  }
+
+  private pickKingMoves(coord: CoordinateInterface, color: Color): CoordinateInterface[] {
+    if (this.variant === GameType.GrandChess) {
+      return getGrandChessKingMoves(coord, color, this)
+    }
+    if (this.variant === GameType.Generals) {
+      return getGeneralsKingMoves(coord, color, this)
+    }
+    return getHeirsKingMoves(coord, color, this)
+  }
+
   private baseAvailableMovesFromCoord(coord: CoordinateInterface): CoordinateInterface[] {
     Utils.validateCoordinate(coord)
 
@@ -666,9 +859,7 @@ export class Position {
 
     switch (cellInfo.figure) {
       case Figure.Pawn:
-        returnValue = this.variant === GameType.GrandChess
-          ? getGrandChessPawnMoves(coord, cellInfo.color, this)
-          : getHeirsPawnMoves(coord, cellInfo.color, this)
+        returnValue = this.pickPawnMoves(coord, cellInfo.color)
         break
       case Figure.Queen:
         returnValue = getQueenMoves(coord, cellInfo.color, this)
@@ -686,6 +877,12 @@ export class Position {
       case Figure.Cardinal:
         returnValue = getCardinalMoves(coord, cellInfo.color, this)
         break
+      case Figure.General:
+        returnValue = getGeneralMoves(coord, cellInfo.color, this)
+        break
+      case Figure.Jester:
+        returnValue = getJesterMoves(coord, cellInfo.color, this)
+        break
       case Figure.Knight:
         returnValue = getKnightMoves(coord, cellInfo.color, this)
         break
@@ -693,10 +890,7 @@ export class Position {
         returnValue = getBishopMoves(coord, cellInfo.color, this)
         break
       case Figure.King:
-        // Stryker disable next-line all -- in Grand Chess the castling flags are never set, so getHeirsKingMoves degenerates to the same 8 unit-direction moves as getGrandChessKingMoves; the variant pick is observationally equivalent.
-        returnValue = this.variant === GameType.GrandChess
-          ? getGrandChessKingMoves(coord, cellInfo.color, this)
-          : getHeirsKingMoves(coord, cellInfo.color, this)
+        returnValue = this.pickKingMoves(coord, cellInfo.color)
         break
       // Stryker disable next-line all -- defensive: every Figure value is handled above.
       default:

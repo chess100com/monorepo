@@ -9,8 +9,11 @@ import type { CoordinateInterface, ExtraMoveData } from '@chess100com/rules';
 import type { GameStateSnapshot, PlayerColor } from '@chess100com/client-core';
 import { coordToKey, computeDests, isPromotion, keyToCoord, AutoPawnPromotion } from '../services/chess';
 
-const variantToChessgroundVariant = (t: GameType | undefined): Variant =>
-  t === GameType.GrandChess ? 'grandchess' : 'heirs';
+const variantToChessgroundVariant = (t: GameType | undefined): Variant => {
+  if (t === GameType.GrandChess) return 'grandchess';
+  if (t === GameType.Generals) return 'generals';
+  return 'heirs';
+};
 
 export interface BoardGameLike {
   state: GameStateSnapshot | null;

@@ -89,6 +89,7 @@ export const hi = {
   variants: {
     heirs: 'उत्तराधिकारी',
     grandchess: 'ग्रैंड शतरंज',
+    generals: 'जनरल और विदूषक',
   },
   rules: {
     title: 'नियम',

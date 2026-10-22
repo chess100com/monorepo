@@ -16,6 +16,7 @@ const DEFAULT_MOVETIME_MS = 1000;
 const ENGINE_VARIANT_NAME: Record<GameType, string> = {
   [GameType.Heirs]: 'chess100',
   [GameType.GrandChess]: 'chess100grand',
+  [GameType.Generals]: 'chess100generals',
 };
 
 export class BotGameStore {

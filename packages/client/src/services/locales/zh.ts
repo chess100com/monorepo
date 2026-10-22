@@ -89,6 +89,7 @@ export const zh = {
   variants: {
     heirs: '继承人',
     grandchess: '大象棋',
+    generals: '将军与小丑',
   },
   rules: {
     title: '规则',

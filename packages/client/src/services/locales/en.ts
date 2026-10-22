@@ -89,6 +89,7 @@ export const en = {
   variants: {
     heirs: 'Heirs',
     grandchess: 'Grand Chess',
+    generals: 'Generals & Jesters',
   },
   rules: {
     title: 'Rules',

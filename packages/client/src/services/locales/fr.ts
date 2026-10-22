@@ -89,6 +89,7 @@ export const fr = {
   variants: {
     heirs: 'Héritiers',
     grandchess: 'Grand Échecs',
+    generals: 'Généraux et Bouffons',
   },
   rules: {
     title: 'Règles',

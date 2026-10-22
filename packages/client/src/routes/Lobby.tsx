@@ -10,6 +10,7 @@ import { useStore } from '../stores/context';
 const VARIANT_I18N: Record<GameType, string> = {
   [GameType.Heirs]: 'variants.heirs',
   [GameType.GrandChess]: 'variants.grandchess',
+  [GameType.Generals]: 'variants.generals',
 };
 
 const VARIANT_OPTIONS: GameType[] = Object.values(GameType);

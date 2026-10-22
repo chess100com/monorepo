@@ -30,6 +30,16 @@ const rolesByVariant: Record<cg.Variant, { [letter: string]: cg.Role }> = {
     m: 'marshal',
     c: 'cardinal',
   },
+  generals: {
+    p: 'pawn',
+    r: 'rook',
+    n: 'knight',
+    b: 'bishop',
+    q: 'queen',
+    k: 'king',
+    g: 'general',
+    c: 'jester',
+  },
 };
 
 /**
@@ -48,6 +58,8 @@ const letters: { [role in cg.Role]: string } = {
   prince: 'c',
   marshal: 'm',
   cardinal: 'c',
+  general: 'g',
+  jester: 'c',
 };
 
 export function read(fen: cg.FEN, variant: cg.Variant = 'heirs'): cg.Pieces {
