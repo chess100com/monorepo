@@ -1,7 +1,7 @@
 // oxlint-disable complexity
-import type { Position } from "../Position.js"
-import type { CoordinateInterface, Color } from "../Shared.js"
-import { Utils } from "../Utils.js"
+import type { Position } from "../Position"
+import type { CoordinateInterface, Color } from "../Shared"
+import { Utils } from "../Utils"
 
 const orthoDirections: number[][] = [[-1, 0], [1, 0], [0, -1], [0, 1]]
 

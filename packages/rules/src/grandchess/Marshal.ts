@@ -1,7 +1,7 @@
-import type { Position } from "../Position.js"
-import type { CoordinateInterface, Color } from "../Shared.js"
-import { getRookMoves } from "../common/Rook.js"
-import { getKnightMoves } from "../common/Knight.js"
+import type { Position } from "../Position"
+import type { CoordinateInterface, Color } from "../Shared"
+import { getRookMoves } from "../common/Rook"
+import { getKnightMoves } from "../common/Knight"
 
 /**
  * Marshal = Rook + Knight.

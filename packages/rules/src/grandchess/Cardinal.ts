@@ -1,7 +1,7 @@
-import type { Position } from "../Position.js"
-import type { CoordinateInterface, Color } from "../Shared.js"
-import { getBishopMoves } from "../common/Bishop.js"
-import { getKnightMoves } from "../common/Knight.js"
+import type { Position } from "../Position"
+import type { CoordinateInterface, Color } from "../Shared"
+import { getBishopMoves } from "../common/Bishop"
+import { getKnightMoves } from "../common/Knight"
 
 /**
  * Cardinal = Bishop + Knight.

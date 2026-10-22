@@ -32,7 +32,7 @@ export type {
   UciEngine,
   UciLineListener,
   UciUnsubscribe,
-} from './engine/index.js';
+} from './engine/index';
 export {
   askBestMove,
   coordToFsSquare,
@@ -49,4 +49,4 @@ export {
   SKILL_STEP_TO_UCI,
   waitForLine,
   waitReady,
-} from './engine/index.js';
+} from './engine/index';

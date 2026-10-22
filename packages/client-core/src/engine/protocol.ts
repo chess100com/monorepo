@@ -1,5 +1,5 @@
-import type { UciEngine } from './UciEngine.js';
-import { parseUciMove, type ParsedUciMove } from './coords.js';
+import type { UciEngine } from './UciEngine';
+import { parseUciMove, type ParsedUciMove } from './coords';
 
 const DEFAULT_UCI_TIMEOUT_MS = 10_000;
 const DEFAULT_MOVE_TIMEOUT_MS = 20_000;

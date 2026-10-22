@@ -84,7 +84,7 @@ Pure bug fixes, dependency bumps, copy tweaks, and additive code that follows ex
 
 ### Imports
 
-- **Relative imports must end with `.js`** — including in `.ts` / `.tsx` files (e.g. `import { foo } from './bar.js';`, not `'./bar'`). The `.js` specifier still resolves to the `.ts`/`.tsx` source under every package's module resolution. VSCode's [.vscode/settings.json](.vscode/settings.json) sets `"js/ts.preferences.importModuleSpecifierEnding": "js"` so auto-imports follow suit. This applies across all packages except `packages/chessground/` (keep its local conventions — though it already uses `.js` too).
+- **Relative imports have no extension** in `.ts` / `.tsx` files (e.g. `import { foo } from './bar';`, not `'./bar.js'`). Every package's module resolution (`commonjs` / `node` / `bundler`) resolves extensionless specifiers. VSCode's [.vscode/settings.json](.vscode/settings.json) sets `"js/ts.preferences.importModuleSpecifierEnding": "minimal"` so auto-imports follow suit. This applies across all packages except `packages/chessground/` — it's an ESM package compiled to `dist/` by plain `tsc`, so it keeps `.js` specifiers (Node ESM needs them at runtime).
 - Package-name imports (`@chess100com/rules`, `express`, …) stay as-is. Asset/CSS/JSON imports keep their actual extension (`'./styles.css'`, `'./data.json'`).
 
 ### Rules engine

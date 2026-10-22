@@ -1,8 +1,8 @@
 // oxlint-disable complexity
-import type { Position } from "../Position.js"
-import type { CoordinateInterface } from "../Shared.js";
-import { Color, Figure } from "../Shared.js"
-import { Utils } from "../Utils.js"
+import type { Position } from "../Position"
+import type { CoordinateInterface } from "../Shared";
+import { Color, Figure } from "../Shared"
+import { Utils } from "../Utils"
 
 const ROYAL_VERTICAL = 5
 

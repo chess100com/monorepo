@@ -1,6 +1,6 @@
 // oxlint-disable max-lines
 // oxlint-disable complexity
-import type { BoardInterface, CellInfo, CoordinateInterface, ExtraMoveData, MoveInterface } from "./Shared.js";
+import type { BoardInterface, CellInfo, CoordinateInterface, ExtraMoveData, MoveInterface } from "./Shared";
 import {
   Color,
   Figure,
@@ -9,23 +9,23 @@ import {
   AvailablePawnTransforms,
   GrandChessPawnTransforms,
   GameType,
-} from "./Shared.js"
-import { Utils } from "./Utils.js"
-import { getHeirsPawnMoves } from "./heirs/Pawn.js"
-import { getHeirsKingMoves } from "./heirs/King.js"
-import { getPrincessMoves } from "./heirs/Princess.js"
-import { getGrandChessPawnMoves } from "./grandchess/Pawn.js"
-import { getGrandChessKingMoves } from "./grandchess/King.js"
-import { getMarshalMoves } from "./grandchess/Marshal.js"
-import { getCardinalMoves } from "./grandchess/Cardinal.js"
-import { getGeneralsPawnMoves, isPawnCastlingPartner } from "./generals/Pawn.js"
-import { getGeneralsKingMoves } from "./generals/King.js"
-import { getGeneralMoves } from "./generals/General.js"
-import { getJesterMoves } from "./generals/Jester.js"
-import { getQueenMoves } from "./common/Queen.js"
-import { getRookMoves } from "./common/Rook.js"
-import { getBishopMoves } from "./common/Bishop.js"
-import { getKnightMoves } from "./common/Knight.js"
+} from "./Shared"
+import { Utils } from "./Utils"
+import { getHeirsPawnMoves } from "./heirs/Pawn"
+import { getHeirsKingMoves } from "./heirs/King"
+import { getPrincessMoves } from "./heirs/Princess"
+import { getGrandChessPawnMoves } from "./grandchess/Pawn"
+import { getGrandChessKingMoves } from "./grandchess/King"
+import { getMarshalMoves } from "./grandchess/Marshal"
+import { getCardinalMoves } from "./grandchess/Cardinal"
+import { getGeneralsPawnMoves, isPawnCastlingPartner } from "./generals/Pawn"
+import { getGeneralsKingMoves } from "./generals/King"
+import { getGeneralMoves } from "./generals/General"
+import { getJesterMoves } from "./generals/Jester"
+import { getQueenMoves } from "./common/Queen"
+import { getRookMoves } from "./common/Rook"
+import { getBishopMoves } from "./common/Bishop"
+import { getKnightMoves } from "./common/Knight"
 
 /**
  * Picks any empty square of the player's pawn rank for the throne pawn

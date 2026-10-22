@@ -3,7 +3,7 @@
 import type { UciEngine, UciLineListener, UciUnsubscribe } from '@chess100com/client-core';
 import { initUci, loadChess100Variant } from '@chess100com/client-core';
 
-import type { WorkerInboundMessage, WorkerOutboundMessage } from './worker-messages.js';
+import type { WorkerInboundMessage, WorkerOutboundMessage } from './worker-messages';
 
 const WORKER_READY_TIMEOUT_MS = 15_000;
 

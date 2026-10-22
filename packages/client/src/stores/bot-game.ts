@@ -66,7 +66,7 @@ export class BotGameStore {
       }
       if (!this.engine) {
         const [{ createWasmEngine }, iniModule] = await Promise.all([
-          import('../services/engine/wasmEngine.js'),
+          import('../services/engine/wasmEngine'),
           import('../assets/chess100.ini?raw'),
         ]);
         this.engine = await createWasmEngine(iniModule.default, ENGINE_VARIANT_NAME[variant]);

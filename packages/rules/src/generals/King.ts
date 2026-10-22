@@ -1,9 +1,9 @@
 // oxlint-disable complexity
 // oxlint-disable max-depth
-import type { Position } from "../Position.js"
-import type { Color } from "../Shared.js";
-import { type CoordinateInterface, Figure } from "../Shared.js"
-import { Utils } from "../Utils.js"
+import type { Position } from "../Position"
+import type { Color } from "../Shared";
+import { type CoordinateInterface, Figure } from "../Shared"
+import { Utils } from "../Utils"
 
 // Stryker disable next-line all -- symmetric direction set; unary mutations
 // on individual coordinates rename existing directions, making them equivalent.

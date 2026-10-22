@@ -1,6 +1,6 @@
-import type { GameMetaData } from "./Game.js"
-import { Game } from "./Game.js"
-import { GameType, HeirsStartFen, GrandChessStartFen, GeneralsStartFen } from "./Shared.js"
+import type { GameMetaData } from "./Game"
+import { Game } from "./Game"
+import { GameType, HeirsStartFen, GrandChessStartFen, GeneralsStartFen } from "./Shared"
 
 /**
  * Creates a fresh game instance for a variant. The factory carries the

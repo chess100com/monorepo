@@ -1,6 +1,6 @@
-import type { Position } from "../Position.js"
-import type { CoordinateInterface, Color } from "../Shared.js"
-import { Utils } from "../Utils.js"
+import type { Position } from "../Position"
+import type { CoordinateInterface, Color } from "../Shared"
+import { Utils } from "../Utils"
 
 // Stryker disable next-line all -- symmetric direction set; any unary-operator
 // mutation just renames an existing direction, making the mutants equivalent.

@@ -1,4 +1,4 @@
-export type { UciEngine, UciLineListener, UciUnsubscribe } from './UciEngine.js';
+export type { UciEngine, UciLineListener, UciUnsubscribe } from './UciEngine';
 export {
   coordToFsSquare,
   fsFileLetterToLocal,
@@ -7,8 +7,8 @@ export {
   isPromotionTransform,
   localFileLetterToFs,
   parseUciMove,
-} from './coords.js';
-export type { ParsedUciMove } from './coords.js';
+} from './coords';
+export type { ParsedUciMove } from './coords';
 export {
   askBestMove,
   initUci,
@@ -18,5 +18,5 @@ export {
   SKILL_STEP_TO_UCI,
   waitForLine,
   waitReady,
-} from './protocol.js';
-export type { AskBestMoveParams, BestMove, SkillStep } from './protocol.js';
+} from './protocol';
+export type { AskBestMoveParams, BestMove, SkillStep } from './protocol';

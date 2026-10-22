@@ -13,7 +13,7 @@ import pthreadWorkerUrl from 'fairy-stockfish-nnue.wasm/stockfish.worker.js?url'
 // at `URL.createObjectURL`. We hand them the bundled stockfish.js asset URL.
 import stockfishJsUrl from 'fairy-stockfish-nnue.wasm/stockfish.js?url';
 
-import type { WorkerInboundMessage, WorkerOutboundMessage } from './worker-messages.js';
+import type { WorkerInboundMessage, WorkerOutboundMessage } from './worker-messages';
 
 declare const self: DedicatedWorkerGlobalScope;
 
